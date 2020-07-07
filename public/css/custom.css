@@ -1,0 +1,50 @@
+
+/* Yunus Eklemeler */
+
+.datatable-scroll-wrap {
+    width: 100%;
+    min-height: .01%;
+    overflow-x:revert;
+}
+
+table .btn-group-sm > .btn, .btn-sm {
+    padding: .40rem .40rem;
+    font-size: .400rem;
+    line-height: 0.500;
+    border-radius: .10rem;
+}
+
+.swal2-icon.swal2-warning {
+    color: #ff7043;
+    border-color: #ff7043;
+    font-size: 1rem; 
+    line-height: 3rem;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.table-sm td, .table-sm th {
+    padding: 0.300rem 0.55rem;
+}
+.btn-group, .btn-group-vertical {
+    position: inherit;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    vertical-align: bottom;
+}
+
+.btn-group, .btn-group-vertical {
+    position: inherit;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.card {
+    position: relative;
+
+}
+
+table .btn-group-sm > .btn, .btn-sm {
+    font-size: .700rem;
+}
