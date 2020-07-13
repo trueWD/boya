@@ -2,20 +2,20 @@
 @section('breadcrumb')
 	<div class="breadcrumb">
         <a href="{{ url('home') }}" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Ana Sayfa</a>
-        <span class="breadcrumb-item active">Kullanıcı Listesi</span>
+        <span class="breadcrumb-item active">Alış Fatura Listesi</span>
     </div>
 @endsection
 @section('content')
 
 <!-- BEGIN FORM -->
-@include('urun.create')
-<div id="UrunEditResponse"></div>
+@include('fatura.alis.create')
+<div id="FaturaEditResponse"></div>
 <div id="UrunCopyResponse"></div>
 
     <!-- Column selectors -->
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h5 class="card-title">ÜRÜN KARTLARI LİSTESİ</h5>
+            <h5 class="card-title">ALIŞ FATURA LİSTESİ</h5>
             <div class="header-elements">
                 <div class="list-icons">
                     <a class="list-icons-item" data-action="collapse"></a>
@@ -25,24 +25,23 @@
 
         <div class="card-body">
 
-            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#YeniUrunModal"><i class="icon-plus3"></i> Ürün Kartı Ekle</button>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#AlisFaturaModal"><i class="icon-plus3"></i> Alış Faturası Oluştur</button>
 
             <table class="table table-striped table-bordered table-hover table-sm myDataTable1">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Barkod</th>
-                        <th>Urun Adı</th>
-                        <th>Marka</th>
-                        <th>Kodu</th>
-                        <th>Grubu</th>
-                        <th>Stok</th>
-                        <th>Alış Fiyatı</th>
-                        <th>Satış Fiyatı</th>
+                        <th>Durumu</th>
+                        <th>Fatura No</th>
+                        <th>Cari Adı</th>
+                        <th>Fatura Tarihi</th>
+                        <th>Tutar</th>
+                        <th>Sorumlu</th>
+                        <th>Oluşturma Tarihi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($urunler as $urun)
+                    @foreach($fatura as $row)
                     <tr>
                         <td>
                             <div class="btn-group btn-group-sm">
@@ -51,20 +50,28 @@
                                 </button>
                                 
                                 <div class="dropdown-menu">
-                                    <button type="button" class="dropdown-item UrunEdit" id="{{ $urun->id }}"><i class="icon-equalizer3"></i> Düzenle</button>
-                                    
-                                    <button type="button" class="dropdown-item text-danger UrunDelete" id="{{ $urun->id }}"><i class="icon-trash"></i> Sil</button>
+                                    <button type="button" class="dropdown-item FaturaEdit" id="{{ $row->id }}"><i class="icon-equalizer3"></i> Düzenle</button>
+                                    @if( $row->durumu == "ACIK") 
+                                    <button type="button" class="dropdown-item text-danger FaturaDelete" id="{{ $row->id }}"><i class="icon-trash"></i> Sil</button>
+                                    @endif
                                 </div>
                             </div>
                         </td>
-                        <td>{{ $urun->barkod }}</td>
-                        <td>{{ $urun->urunadi }}</td>
-                        <td>{{ $urun->marka }}</td>
-                        <td>{{ $urun->urunkodu }}</td>
-                        <td>{{ $urun->grubu }}</td>
-                        <td>{{ $urun->stok }}</td>
-                        <td>{{ para($urun->fiyat) }} TL</td>
-                        <td>{{ para($urun->fiyat_satis) }} TL</td>
+                        <td>
+                             @if( $row->durumu == "ACIK") 
+                                <span class="badge badge-primary">{{ $row->durumu }}</span>
+                            @elseif($row->durumu == "KAPALI")
+                                <span class="badge badge-success">{{ $row->durumu }}</span>
+                            @else
+                                <span class="badge badge-warning">{{ $row->durumu }}</span>
+                            @endif
+                        </td>
+                        <td>{{ $row->faturano }}</td>
+                        <td>{{ $row->cariadi }}</td>
+                        <td>{{ tarih($row->fatura_tarihi) }}</td>
+                        <td>{{ para($row->tutar) }} TL</td>
+                        <td>{{ $row->username }}</td>
+                        <td>{{ tarih($row->created_at) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -74,10 +81,8 @@
     </div>
     <!-- /column selectors -->
 
-
-
 <script type="text/javascript">
-    $(document).on('click', '.UrunCopy', function (e) {
+    $(document).on('click', '.FaturaEdit', function (e) {
         e.preventDefault();
         //var id = $(this).data('id');
 
@@ -91,48 +96,14 @@
 
             $.ajax({
                     method    : "POST",
-                    url       : "{{ url('urun/copy') }}",
+                    url       : "{{ url('fatura/alis/edit') }}",
                     data      : {"id":id},
                     dataType  : "JSON",
                 })
             .done(function(response) {
                 
-                $("#UrunCopyResponse").html(response.UrunCopy);
-                $('#UrunCopyModal').modal('show');
-
-                })
-            .fail(function(response) {
-
-                console.log("Hata: ", response);
-
-                });
-            //return false;
-
-    });
-</script>
-<script type="text/javascript">
-    $(document).on('click', '.UrunEdit', function (e) {
-        e.preventDefault();
-        //var id = $(this).data('id');
-
-            var id = $(this).attr("id");
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-                });
-
-            $.ajax({
-                    method    : "POST",
-                    url       : "{{ url('urun/edit') }}",
-                    data      : {"id":id},
-                    dataType  : "JSON",
-                })
-            .done(function(response) {
-                
-                $("#UrunEditResponse").html(response.urunedit);
-                $('#UrunEditModal').modal('show');
+                $("#FaturaEditResponse").html(response.FaturaEdit);
+                $('#FaturaEditModal').modal('show');
 
                 })
             .fail(function(response) {
@@ -146,7 +117,7 @@
 </script>
 
 <script type="text/javascript">
-$(document).on('click', '.UrunDelete', function(e){
+$(document).on('click', '.FaturaDelete', function(e){
 e.preventDefault();
 
   const swalWithBootstrapButtons = Swal.mixin({
@@ -180,7 +151,7 @@ e.preventDefault();
 
     $.ajax({
             method    : "POST",
-            url       : "{{ url('urun/destroy') }}",
+            url       : "{{ url('fatura/alis/destroy') }}",
             data      : {"id":id},
             dataType  : "JSON",
             })

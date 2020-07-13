@@ -147,7 +147,13 @@ Route::patch('password/reset', 'Auth\ChangePasswordController@changePassword')->
    Route::post('uretim/UretimeEkle', ['uses' => 'Uretim\UretimController@UretimeEkle','as' => 'uretim.UretimeEkle']);
    Route::post('uretim/UretimSil', ['uses' => 'Uretim\UretimController@UretimSil','as' => 'uretim.UretimSil']);
    Route::post('uretim/SiralamaDegis', ['uses' => 'Uretim\UretimController@SiralamaDegis','as' => 'uretim.SiralamaDegis']);
-
+   //Fatura Alış Faturası
+   Route::get('fatura/alis', ['uses' => 'Fatura\FaturaAlisController@index','as' => 'fatura.alis.index']);
+   Route::post('fatura/alis', ['uses' => 'Fatura\FaturaAlisController@store','as' => 'fatura.alis.store']);
+   Route::post('fatura/alis/edit', ['uses' => 'Fatura\FaturaAlisController@edit','as' => 'fatura.alis.edit']);
+   Route::post('fatura/alis/update', ['uses' => 'Fatura\FaturaAlisController@update','as' => 'fatura.alis.update']);
+   Route::post('fatura/alis/destroy', ['uses' => 'Fatura\FaturaAlisController@destroy','as' => 'fatura.alis.destroy']);
+   
 
   
   

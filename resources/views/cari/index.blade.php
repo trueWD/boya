@@ -30,12 +30,15 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>İslem</th>
+                        <th>ID</th>
                         <th>Cari Adı</th>
+                        <th>Bakiye</th>
+                        <th>Vegi No</th>
+                        <th>Vergi Dairesi</th>
                         <th>Ülke</th>
                         <th>Şehir</th>  
                         <th>Telefon</th>
-                        <th>danisman</th>
+                        <th>Cari Türü</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,10 +60,22 @@
                         </td>
                         <td>{{ $cari->id }}</td>
                         <td>{{ $cari->cariadi }}</td>
+                        <td>{{ para($cari->bakiye) }}</td>
+                        <td>{{ $cari->vergino }}</td>
+                        <td>{{ $cari->vergidairesi }}</td>
                         <td>{{ $cari->ulke }}</td>
                         <td>{{ $cari->sehir }}</td>
                         <td>{{ $cari->telefon }}</td>
-                        <td>{{ $cari->temsilci }}</td>
+                        <td>
+                            @if( $cari->grubu == "TEDARIKCI") 
+                                <span class="badge badge-primary">{{ $cari->grubu }}</span>
+                            @elseif($cari->grubu == "MUSTERI")
+                                <span class="badge badge-warning">{{ $cari->grubu }}</span>
+                            @else
+                                <span class="badge badge-success">{{ $cari->grubu }}</span>
+                            @endif
+                            
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

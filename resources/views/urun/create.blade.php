@@ -101,7 +101,7 @@
 
                         <div class="col-md-6">
                           <div class="form-group">
-                            <label>Satış Fiyatı:</label>
+                            <label>Alış Fiyatı:</label>
                             <input type="text" name="fiyat" class="form-control" id="fiyat" placeholder="Fiyat" autocomplete="off">
                           </div>
                         </div>

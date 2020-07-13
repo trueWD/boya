@@ -23,11 +23,11 @@
 
 
 <!-- TEDARİK -->
-<li class="nav-item nav-item-submenu {{ request()->is('tedarik','tedarik/*') ? 'nav-item-expanded nav-item-open' : '' }}">
+<li class="nav-item nav-item-submenu {{ request()->is('fatura/alis','fatura/alis/*') ? 'nav-item-expanded nav-item-open' : '' }}">
 	<a href="#" class="nav-link"><i class="icon-git-compare"></i> <span>ALIŞ YÖNETİMİ</span></a>
 
 	<ul class="nav nav-group-sub" data-submenu-title="TEDARİK YÖNETİMİ">
-		<li class="nav-item"><a href="{{ url('tedarik') }}" class="nav-link {{ request()->is('tedarik') ? 'active' : '' }}">Sipariş Listesi</a></li>
+		<li class="nav-item"><a href="{{ url('fatura/alis') }}" class="nav-link {{ request()->is('fatura/alis') ? 'active' : '' }}">Alış Faturası</a></li>
 	</ul>		
 </li>
 
