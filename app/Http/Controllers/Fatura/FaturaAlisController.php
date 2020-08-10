@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Urun01;
 use App\Models\Params;
 use App\Models\Fatura01;
+use App\Models\Fatura02;
 use App\Models\Cari01;
 use App\User;
 use App\Http\Requests\Fatura\AlisFaturaRequest;
-use App\Http\Requests\Urun\UpdateUrunRequest;
+use App\Http\Requests\Fatura\AlisUrunEkleRequest;
+use App\Http\Requests\Fatura\AlisUrunUpdateRequest;
 
 class FaturaAlisController extends Controller
 {
@@ -26,7 +28,7 @@ class FaturaAlisController extends Controller
             return abort(401);
         }
 
-        $fatura     = Fatura01::where('tipi','=','ALIS')->limit(100)->get();
+        $fatura     = Fatura01::where('tipi','=','ALIS')->where('durumu','=','AKTIF')->limit(100)->get();
 
  
 
@@ -55,7 +57,7 @@ class FaturaAlisController extends Controller
         // Posta eklencek yeni elemanlar
         $fatura01->create(array_merge($post,
             [
-                'durumu' => 'ACIK',
+                'durumu' => 'AKTIF',
                 'tipi' => 'ALIS',
                 'cari01' => $cari->id,
                 'cariadi' => $cari->cariadi,
@@ -138,8 +140,202 @@ class FaturaAlisController extends Controller
 
         $data = [
             'title' => 'Başarılı!',
-            'text' => 'Kullanıcı Silindi',
+            'text' => 'Fatura Silindi',
             'type' => 'success',
+        ];
+
+        return response()->json($data);
+    }
+    /*
+    _____________________________________________________________________________________________
+    Show Fatura Ekle
+    _____________________________________________________________________________________________
+    */
+    public function show($id)
+    {
+        if (!Gate::allows('users_manage')) {
+            return abort(401);
+        }
+        $fatura     = Fatura01::with('cari')->findOrFail($id);
+        $urunler    = Fatura02::with('urun')->where('fatura01','=', $fatura->id)->get();
+
+        return view('fatura.alis.show', compact('fatura', 'urunler'));
+
+    }
+    /*
+    _____________________________________________________________________________________________
+    Faturaya Ürün Ekle
+    _____________________________________________________________________________________________
+    */
+    public function UrunEkle(AlisUrunEkleRequest $request)
+    {
+        if (!Gate::allows('users_manage')) {
+            return abort(401);
+        }
+       // dd($request->all());
+        $post   = $request->except(['faturaid','urunid','fiyat']);
+        $fiyat  = tutarToRaw($request->fiyat);
+        $user   = User::find(auth()->id());
+
+        $tutar      = $request->miktar * $fiyat;
+        $kdv_tutar  = $tutar * 18 / 100;
+        $kdv_dahil  = $kdv_tutar + $tutar;
+
+
+        $ekle       = new Fatura02;
+        $ekle->create(array_merge(
+            $post,
+            [
+                'fatura01' => $request->faturaid,
+                'urun01' => $request->urunid,
+                'miktar' => $request->miktar,
+                'tutar' => paraEn($tutar),
+                'fiyat' => $fiyat,
+                'kdv' => $request->kdv,
+                'kdv_tutar' => paraEn($kdv_tutar),
+                'kdv_dahil' => paraEn($kdv_dahil),
+                'userid' => $user->id,
+    
+            ]
+        ));
+
+        $urunler    = Fatura02::with('urun')->where('fatura01', '=', $request->faturaid)->get();
+
+        $urun_listesi = view(
+            'fatura.alis.urun_listesi',
+            [
+                'urunler' => $urunler,
+            ]
+        )->render();
+
+        $data = [
+            'title' => 'Başarılı!',
+            'text'  => 'Kayıt başarılı',
+            'type'  => 'success',
+            'urun_listesi'  => $urun_listesi,
+        ];
+
+        return response()->json($data);;
+
+    }
+
+    /*
+    _____________________________________________________________________________________________
+    Ürün Delete
+    _____________________________________________________________________________________________
+    */
+    public function UrunSil(Request $request)
+    {
+        if (!Gate::allows('users_manage')) {
+            return abort(401);
+        }
+
+        $urun = Fatura02::findOrFail($request->id);
+        $urun->delete();
+
+        $data = [
+            'title' => 'Başarılı!',
+            'text' => 'Ürün Silindi',
+            'type' => 'success',
+        ];
+
+        return response()->json($data);
+    }
+
+    /*
+    _____________________________________________________________________________________________
+    edit 
+    _____________________________________________________________________________________________
+    */
+    public function UrunEdit(request $request)
+    {
+        if (!Gate::allows('users_manage')) {
+            return abort(401);
+        }
+
+        $urun       = Fatura02::with('urun')->findOrFail($request->id);
+ 
+
+        $data['UrunEdit']       = view(
+            'fatura.alis.urun_edit',
+            [
+                'urun' => $urun,
+            ]
+        )->render();
+
+        return response()->json($data);
+    }
+
+    /*
+    _____________________________________________________________________________________________
+    Update
+    _____________________________________________________________________________________________
+    */
+    public function UrunUpdate(AlisUrunUpdateRequest $request)
+    {
+        if (!Gate::allows('users_manage')) {
+            return abort(401);
+        }
+        $fiyat  = tutarToRaw($request->fiyat);
+
+        $tutar      = $request->miktar * $fiyat;
+        $kdv_tutar  = $tutar * 18 / 100;
+        $kdv_dahil  = $kdv_tutar + $tutar;
+
+
+        $urun   = Fatura02::findOrFail($request->id);
+        $urun->fiyat        = $fiyat;
+        $urun->miktar       = $request->miktar;
+        $urun->kdv          = $request->kdv;
+        $urun->tutar        = $tutar;
+        $urun->kdv_tutar    = $kdv_tutar;
+        $urun->kdv_dahil    = $kdv_dahil;
+        $urun->updated_at   = now();
+        $urun->save();
+
+        $data = [
+            'title' => 'Başarılı!',
+            'text'  => 'Kayıt başarılı',
+            'type'  => 'success',
+        ];
+
+        return response()->json($data);
+    }
+    /*
+    _____________________________________________________________________________________________
+    Fatura Kapat
+    _____________________________________________________________________________________________
+    */
+    public function FaturaKapat(Request $request)
+    {
+        if (!Gate::allows('users_manage')) {
+            return abort(401);
+        }
+
+        $fatura   = Fatura01::with('urunler')->findOrFail($request->id);
+        $fatura->tutar      = paraEn($fatura->urunler->sum('kdv_dahil'));
+        $fatura->durumu     = 'KAPALI';
+        $fatura->updated_at = now();
+        $fatura->save();
+        
+        // Ürün adetleri kadar stoğu artırma
+        foreach ($fatura->urunler as $row) {
+
+            $urun   = Urun01::findOrFail($row->urun01);
+            $urun->stok     = paraEn($urun->stok + $row->miktar);
+            $urun->save();        
+
+
+        }
+        // cari bakiyesi artırma
+        $cari   = Cari01::findOrFail($fatura->cari01);
+        $cari->bakiye     = paraEn($cari->bakiye + $fatura->urunler->sum('kdv_dahil'));
+        $cari->save();
+        
+        $data = [
+            'title' => 'Başarılı!',
+            'text'  => 'Kayıt başarılı',
+            'type'  => 'success',
         ];
 
         return response()->json($data);

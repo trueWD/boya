@@ -153,22 +153,6 @@
 
 
 
-
-                  
-
-
-                  
-                  
-
-
-
-
-
-
-
-
-
-
                 </div>
 
                 <div class="modal-footer">
@@ -182,6 +166,15 @@
 </form>
 
 {!! JsValidator::formRequest('App\Http\Requests\Urun\StoreUrunRequest', '#YeniUrunForm'); !!}
+
+<script type="text/javascript">
+  new AutoNumeric('#YeniUrunForm #fiyat', {
+      decimalCharacter : ',',
+      digitGroupSeparator : '.',
+      modifyValueOnWheel	: false,
+  });
+</script>
+
 
 <script type="text/javascript">
 $(document).on('click', '.YeniUrunSubmit', function(e){

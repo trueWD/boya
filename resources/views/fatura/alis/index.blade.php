@@ -15,67 +15,91 @@
     <!-- Column selectors -->
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h5 class="card-title">ALIŞ FATURA LİSTESİ</h5>
-            <div class="header-elements">
-                <div class="list-icons">
-                    <a class="list-icons-item" data-action="collapse"></a>
-                </div>
-            </div>
+        
         </div>
 
         <div class="card-body">
 
-            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#AlisFaturaModal"><i class="icon-plus3"></i> Alış Faturası Oluştur</button>
 
-            <table class="table table-striped table-bordered table-hover table-sm myDataTable1">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Durumu</th>
-                        <th>Fatura No</th>
-                        <th>Cari Adı</th>
-                        <th>Fatura Tarihi</th>
-                        <th>Tutar</th>
-                        <th>Sorumlu</th>
-                        <th>Oluşturma Tarihi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($fatura as $row)
-                    <tr>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                    <i class="icon-menu7"></i>
-                                </button>
-                                
-                                <div class="dropdown-menu">
-                                    <button type="button" class="dropdown-item FaturaEdit" id="{{ $row->id }}"><i class="icon-equalizer3"></i> Düzenle</button>
+            <ul class="nav nav-tabs nav-tabs-highlight">
+                <li class="nav-item"><a href="#left-icon-tab1" class="nav-link active" data-toggle="tab"><i class="icon-file-plus mr-2"></i> AKTİF FATURALAR</a></li>
+                <li class="nav-item"><a href="#left-icon-tab2" class="nav-link" data-toggle="tab"><i class="icon-file-check mr-2"></i> FATURA RAPORU</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade active show" id="left-icon-tab1">
+
+
+                      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#AlisFaturaModal"><i class="icon-plus3"></i> Alış Faturası Oluştur</button>
+                    
+
+                    <table class="table table-striped table-bordered table-hover table-sm myDataTable1">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Durumu</th>
+                                <th>Fatura No</th>
+                                <th>Cari Adı</th>
+                                <th>Fatura Tarihi</th>
+                                <th>Tutar</th>
+                                <th>Sorumlu</th>
+                                <th>Oluşturma Tarihi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($fatura as $row)
+                            <tr>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                            <i class="icon-menu7"></i>
+                                        </button>
+                                        
+                                        <div class="dropdown-menu">
+                                            <button type="button" class="dropdown-item FaturaEdit" id="{{ $row->id }}"><i class="icon-equalizer3"></i> Düzenle</button>
+                                            @if( $row->durumu == "ACIK") 
+                                            <button type="button" class="dropdown-item text-danger FaturaDelete" id="{{ $row->id }}"><i class="icon-trash"></i> Sil</button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
                                     @if( $row->durumu == "ACIK") 
-                                    <button type="button" class="dropdown-item text-danger FaturaDelete" id="{{ $row->id }}"><i class="icon-trash"></i> Sil</button>
+                                        <span class="badge badge-primary">{{ $row->durumu }}</span>
+                                    @elseif($row->durumu == "KAPALI")
+                                        <span class="badge badge-success">{{ $row->durumu }}</span>
+                                    @else
+                                        <span class="badge badge-warning">{{ $row->durumu }}</span>
                                     @endif
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                             @if( $row->durumu == "ACIK") 
-                                <span class="badge badge-primary">{{ $row->durumu }}</span>
-                            @elseif($row->durumu == "KAPALI")
-                                <span class="badge badge-success">{{ $row->durumu }}</span>
-                            @else
-                                <span class="badge badge-warning">{{ $row->durumu }}</span>
-                            @endif
-                        </td>
-                        <td>{{ $row->faturano }}</td>
-                        <td>{{ $row->cariadi }}</td>
-                        <td>{{ tarih($row->fatura_tarihi) }}</td>
-                        <td>{{ para($row->tutar) }} TL</td>
-                        <td>{{ $row->username }}</td>
-                        <td>{{ tarih($row->created_at) }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                                </td>
+                                <td><a href="{{  url('fatura/alis/'.$row->id)  }}" class="btn btn-link btn-sm">{{ $row->faturano }} </a></td>
+                                <td>{{ $row->cariadi }}</td>
+                                <td>{{ tarih($row->fatura_tarihi) }}</td>
+                                <td>{{ para($row->tutar) }} TL</td>
+                                <td>{{ $row->username }}</td>
+                                <td>{{ tarih($row->created_at) }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+                <div class="tab-pane fade" id="left-icon-tab2">
+                    Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid laeggin.
+                </div>
+
+            </div>
+
+
+
+
+
+
+          
+
+      
             
         </div>
     </div>

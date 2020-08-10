@@ -30,6 +30,6 @@ class Fatura01 extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('faura01');
+        Schema::dropIfExists('fatura01');
     }
 }

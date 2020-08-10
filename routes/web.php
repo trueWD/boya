@@ -8,7 +8,7 @@ Route::get('auth/changepassword', 'Auth\ChangePasswordController@showChangePassw
 Route::patch('auth/changepassword', 'Auth\ChangePasswordController@changePassword')->name('auth.change_password');
 Route::patch('password/reset', 'Auth\ChangePasswordController@changePassword')->name('auth.change_password');
 
- Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
 
 
 
@@ -20,7 +20,7 @@ Route::patch('password/reset', 'Auth\ChangePasswordController@changePassword')->
    // Home
    Route::get('/home', 'HomeController@index')->name('home');
 
-   //x Route::resource('admin/users', 'Admin\UsersController');
+   // Route::resource('admin/users', 'Admin\UsersController');
 
    // Users
    Route::get('admin/users', ['uses' => 'Admin\UsersController@index','as' => 'admin.users.index']);
@@ -88,20 +88,6 @@ Route::patch('password/reset', 'Auth\ChangePasswordController@changePassword')->
    Route::post('params/edit', ['uses' => 'Params\ParamsController@edit','as' => 'params.edit']);
    Route::post('params/update', ['uses' => 'Params\ParamsController@update','as' => 'params.update']);
 
-   // Onay
-   Route::get('settings/onay', ['uses' => 'Settings\OnayController@index','as' => 'settings.onay.index']);
-   Route::post('settings/onay', ['uses' => 'Settings\OnayController@store','as' => 'settings.onay.store']);
-   Route::post('settings/onay/destroy', ['uses' => 'Settings\OnayController@destroy','as' => 'settings.onay.destroy']);
-   Route::post('settings/onay/copy', ['uses' => 'Settings\OnayController@copy','as' => 'settings.onay.copy']);
-   Route::post('settings/onay/edit', ['uses' => 'Settings\OnayController@edit','as' => 'settings.onay.edit']);
-   Route::post('settings/onay/update', ['uses' => 'Settings\OnayController@update','as' => 'settings.onay.update']);
-   
-   Route::get('settings/depo', ['uses' => 'Settings\DepoController@index','as' => 'settings.depo.index']);
-   Route::post('settings/depo', ['uses' => 'Settings\DepoController@store','as' => 'settings.depo.store']);
-   Route::post('settings/depo/delete', ['uses' => 'Settings\DepoController@destroy','as' => 'settings.depo.delete']);
-   Route::post('settings/depo/IstifKaydet', ['uses' => 'Settings\DepoController@IstifKaydet','as' => 'settings.depo.IstifKaydet']);
-   Route::post('settings/depo/IstifDelete', ['uses' => 'Settings\DepoController@IstifDelete','as' => 'settings.depo.IstifDelete']);
-   Route::post('settings/depo/DepoIstifleri', ['uses' => 'Settings\DepoController@DepoIstifleri','as' => 'settings.depo.DepoIstifleri']); //Depoya ait istifler
 
    // Cari
    Route::get('cari', ['uses' => 'Cari\CariController@index','as' => 'cari.index']);
@@ -111,48 +97,33 @@ Route::patch('password/reset', 'Auth\ChangePasswordController@changePassword')->
    Route::post('cari/update', ['uses' => 'Cari\CariController@update','as' => 'cari.update']);
    Route::get('cari/{id}', ['uses' => 'Cari\CariController@show','as' => 'cari.show']);
 
-   // Sipariş - İç Piyasa
-   Route::get('siparis/icpiyasa', ['uses' => 'Siparis\IcpiyasaSiparisController@index','as' => 'siparis.icpiyasa.index']);
-   Route::post('siparis/icpiyasa', ['uses' => 'Siparis\IcpiyasaSiparisController@store','as' => 'siparis.icpiyasa.store']);
-   Route::post('siparis/icpiyasa/edit', ['uses' => 'Siparis\IcpiyasaSiparisController@edit','as' => 'siparis.icpiyasa.edit']);
-   Route::post('siparis/icpiyasa/update', ['uses' => 'Siparis\IcpiyasaSiparisController@update','as' => 'siparis.icpiyasa.update']);
-   Route::get('siparis/icpiyasa/{id}', ['uses' => 'Siparis\IcpiyasaSiparisController@show','as' => 'siparis.icpiyasa.show']);
-   Route::post('siparis/icpiyasa/urunDurumu', ['uses' => 'Siparis\IcpiyasaSiparisController@urunDurumu','as' => 'siparis.icpiyasa.urunDurumu']);
-   Route::post('siparis/icpiyasa/urunEkle', ['uses' => 'Siparis\IcpiyasaSiparisController@urunEkle','as' => 'siparis.icpiyasa.urunEkle']);
-   Route::post('siparis/icpiyasa/UrunEdit', ['uses' => 'Siparis\IcpiyasaSiparisController@UrunEdit','as' => 'siparis.icpiyasa.UrunEdit']);
-   Route::post('siparis/icpiyasa/UrunUpdate', ['uses' => 'Siparis\IcpiyasaSiparisController@UrunUpdate','as' => 'siparis.icpiyasa.UrunUpdate']);
-   Route::post('siparis/icpiyasa/NotEkle', ['uses' => 'Siparis\IcpiyasaSiparisController@NotEkle','as' => 'siparis.icpiyasa.NotEkle']);
-   Route::post('siparis/icpiyasa/DeleteNot', ['uses' => 'Siparis\IcpiyasaSiparisController@DeleteNot','as' => 'siparis.icpiyasa.DeleteNot']);
-   Route::get('siparis/icpiyasa/TeklifYazdir/{id}', ['uses' => 'Siparis\IcpiyasaSiparisController@TeklifYazdir','as' => 'siparis.icpiyasa.TeklifYazdir']);
-   
-   // Sipariş Onay - İç Piyasa
-   Route::post('siparis/icpiyasa/OnayaGonder', ['uses' => 'Siparis\SiparisOnayController@OnayaGonder','as' => 'siparis.icpiyasa.OnayaGonder']);
-   Route::post('siparis/icpiyasa/OnaydanGeriAl', ['uses' => 'Siparis\SiparisOnayController@OnaydanGeriAl','as' => 'siparis.icpiyasa.OnaydanGeriAl']);
-   Route::post('siparis/icpiyasa/SiparisOnayla', ['uses' => 'Siparis\SiparisOnayController@SiparisOnayla','as' => 'siparis.icpiyasa.SiparisOnayla']);
-
    //Tedarik
    Route::get('tedarik', ['uses' => 'Tedarik\TedarikController@index','as' => 'tedarik.index']);
    Route::post('tedarik/create', ['uses' => 'Tedarik\TedarikController@create','as' => 'tedarik.create']);
    Route::post('tedarik/SiparisIptal', ['uses' => 'Tedarik\TedarikController@SiparisIptal','as' => 'tedarik.SiparisIptal']);
+
   
-   //Depo
-   Route::get('depo/urunKabul', ['uses' => 'Depo\UrunKabulController@urunKabul','as' => 'depo.urunKabul']);
-   Route::get('depo/etiket', ['uses' => 'Depo\EtiketController@index','as' => 'depo.index']);
-   Route::post('depo/etiket/PiyasaEtiket', ['uses' => 'Depo\EtiketController@PiyasaEtiket','as' => 'depo.etiket.PiyasaEtiket']);
-   Route::post('depo/etiket/PiyasaEtiketOlustur', ['uses' => 'Depo\EtiketController@PiyasaEtiketOlustur','as' => 'depo.etiket.PiyasaEtiketOlustur']);
-    
    //Uretim
-   Route::get('uretim', ['uses' => 'Uretim\UretimController@index','as' => 'uretim.index']);
+   Route::get('uretim', ['uses' => 'Uretim\UretimController@¨¨','as' => 'uretim.index']);
    Route::post('uretim/SiparisListesi', ['uses' => 'Uretim\UretimController@SiparisListesi','as' => 'uretim.SiparisListesi']);
    Route::post('uretim/UretimeEkle', ['uses' => 'Uretim\UretimController@UretimeEkle','as' => 'uretim.UretimeEkle']);
    Route::post('uretim/UretimSil', ['uses' => 'Uretim\UretimController@UretimSil','as' => 'uretim.UretimSil']);
    Route::post('uretim/SiralamaDegis', ['uses' => 'Uretim\UretimController@SiralamaDegis','as' => 'uretim.SiralamaDegis']);
+   
    //Fatura Alış Faturası
    Route::get('fatura/alis', ['uses' => 'Fatura\FaturaAlisController@index','as' => 'fatura.alis.index']);
    Route::post('fatura/alis', ['uses' => 'Fatura\FaturaAlisController@store','as' => 'fatura.alis.store']);
    Route::post('fatura/alis/edit', ['uses' => 'Fatura\FaturaAlisController@edit','as' => 'fatura.alis.edit']);
    Route::post('fatura/alis/update', ['uses' => 'Fatura\FaturaAlisController@update','as' => 'fatura.alis.update']);
    Route::post('fatura/alis/destroy', ['uses' => 'Fatura\FaturaAlisController@destroy','as' => 'fatura.alis.destroy']);
+   Route::get('fatura/alis/{id}', ['uses' => 'Fatura\FaturaAlisController@show','as' => 'fatura.alis.show']);
+   Route::post('fatura/alis/UrunEkle', ['uses' => 'Fatura\FaturaAlisController@UrunEkle','as' => 'fatura.alis.UrunEkle']);
+   Route::post('fatura/alis/UrunSil', ['uses' => 'Fatura\FaturaAlisController@UrunSil','as' => 'fatura.alis.UrunSil']);
+   Route::post('fatura/alis/UrunEdit', ['uses' => 'Fatura\FaturaAlisController@UrunEdit','as' => 'fatura.alis.UrunEdit']);
+   Route::post('fatura/alis/UrunUpdate', ['uses' => 'Fatura\FaturaAlisController@UrunUpdate','as' => 'fatura.alis.UrunUpdate']);
+   Route::post('fatura/alis/FaturaKapat', ['uses' => 'Fatura\FaturaAlisController@FaturaKapat','as' => 'fatura.alis.FaturaKapat']);
+   
+
    
 
   

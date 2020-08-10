@@ -19,6 +19,12 @@ function para($string)
     return number_format($string,2,',', '.');
 
 }
+function paraEn($string)
+{
+    // İnglizce saf paraya çevirir 
+    // Veri banaına kayıt için
+    return number_format($string, 2, '.', '');
+}
 
 
 

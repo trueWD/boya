@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Urun;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use App\Http\Controllers\Urun\UrunController;
 use App\Models\Urun01;
 use App\Models\Params;
 use App\Http\Requests\Urun\StoreUrunRequest;
@@ -57,7 +56,7 @@ class UrunController extends Controller
 
         $kontrol     = Urun01::where('barkod','=',$request->barkod)->get();
 
-        if($kontrol != NULL){
+        if(count($kontrol) > 0){
 
             $data =[
                 'title' => 'HATA!',

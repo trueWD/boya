@@ -16,8 +16,12 @@ class Fatura01 extends Model
     protected $dates = ['deleted_at'];
 
 
-	// public function caricekleri()
-	// {
-	// 	return $this->hasMany('App\Models\HesapDetay', 'cariid', 'id');
-    // }
+	 public function urunler()
+	 {
+	 	return $this->hasMany('App\Models\Fatura02', 'fatura01', 'id');
+     }
+	 public function cari()
+	 {
+	 	return $this->hasOne('App\Models\Cari01', 'id', 'cari01');
+     }
 }
