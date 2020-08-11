@@ -18,7 +18,7 @@
                           <div class="col-md-12">
                             <div class="form-group">
                               <label>Cari Adı:</label>
-                              <select class="js-example-basic-single js-states form-control select cariid" name="cariid" id="cariid"></select>
+                              <select class="js-example-basic-single js-states form-control select cariid" name="cariid" id="cariid1"></select>
                             </div>
                           </div>
                             
@@ -122,13 +122,13 @@ e.preventDefault();
 });
 </script>
 <script type="text/javascript">
-  $('.fatura_tarihi').pickadate();
+  $('#AlisFaturaForm .fatura_tarihi').pickadate();
 </script>
   <script>
-   $.fn.modal.Constructor.prototype._enforceFocus = function() {};
+  $.fn.modal.Constructor.prototype._enforceFocus = function() {};
   $(document).ready(function(){
 
-      $('#cariid').select2({
+      $('#AlisFaturaForm #cariid1').select2({
           ajax : {
               url : '/api/tedarikciler',
               dataType : 'json',

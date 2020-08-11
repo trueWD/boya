@@ -1,3 +1,8 @@
+   @if(count($urunler) !=0)
+        <button type="button" class="btn btn-primary FaturaKapat" id="{{ $fatura->id }}"><i class="icon-plus3"></i> Faturayı Kapat</button>
+    @endif
+    <hr>
+
 <table class="table table-striped table-bordered table-hover table-sm">
     <thead>
         <tr>

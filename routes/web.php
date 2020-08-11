@@ -122,6 +122,8 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('fatura/alis/UrunEdit', ['uses' => 'Fatura\FaturaAlisController@UrunEdit','as' => 'fatura.alis.UrunEdit']);
    Route::post('fatura/alis/UrunUpdate', ['uses' => 'Fatura\FaturaAlisController@UrunUpdate','as' => 'fatura.alis.UrunUpdate']);
    Route::post('fatura/alis/FaturaKapat', ['uses' => 'Fatura\FaturaAlisController@FaturaKapat','as' => 'fatura.alis.FaturaKapat']);
+   Route::post('fatura/alis/FaturaGeriAl', ['uses' => 'Fatura\FaturaAlisController@FaturaGeriAl','as' => 'fatura.alis.FaturaGeriAl']);
+   Route::post('fatura/alis/FaturaRaporu', ['uses' => 'Fatura\FaturaAlisController@FaturaRaporu','as' => 'fatura.alis.FaturaRaporu']);
    
 
    

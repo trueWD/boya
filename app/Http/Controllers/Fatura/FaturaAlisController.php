@@ -28,7 +28,7 @@ class FaturaAlisController extends Controller
             return abort(401);
         }
 
-        $fatura     = Fatura01::where('tipi','=','ALIS')->where('durumu','=','AKTIF')->limit(100)->get();
+        $fatura     = Fatura01::where('tipi','=','ALIS')->where('durumu','=','AKTIF')->limit(100)->orderBy('id','DESC')->get();
 
  
 
@@ -198,13 +198,14 @@ class FaturaAlisController extends Controller
     
             ]
         ));
-
+        $fatura     = Fatura01::with('cari')->findOrFail($request->faturaid);
         $urunler    = Fatura02::with('urun')->where('fatura01', '=', $request->faturaid)->get();
 
         $urun_listesi = view(
             'fatura.alis.urun_listesi',
             [
                 'urunler' => $urunler,
+                'fatura' => $fatura,
             ]
         )->render();
 
@@ -336,6 +337,91 @@ class FaturaAlisController extends Controller
             'title' => 'Başarılı!',
             'text'  => 'Kayıt başarılı',
             'type'  => 'success',
+        ];
+
+        return response()->json($data);
+    }
+    /*
+    _____________________________________________________________________________________________
+    Fatura  Geri Al
+    _____________________________________________________________________________________________
+    */
+    public function FaturaGeriAl(Request $request)
+    {
+        if (!Gate::allows('users_manage')) {
+            return abort(401);
+        }
+
+        $fatura   = Fatura01::with('urunler')->findOrFail($request->id);
+        $fatura->tutar      = 0;
+        $fatura->durumu     = 'AKTIF';
+        $fatura->updated_at = now();
+        $fatura->save();
+        
+        // Ürün adetleri kadar stoğu artırma
+        foreach ($fatura->urunler as $row) {
+
+            $urun   = Urun01::findOrFail($row->urun01);
+            $urun->stok     = paraEn($urun->stok - $row->miktar);
+            $urun->save();        
+
+
+        }
+        // cari bakiyesi artırma
+        $cari   = Cari01::findOrFail($fatura->cari01);
+        $cari->bakiye     = paraEn($cari->bakiye - $fatura->urunler->sum('kdv_dahil'));
+        $cari->save();
+        
+        $data = [
+            'title' => 'Başarılı!',
+            'text'  => 'Kayıt başarılı',
+            'type'  => 'success',
+        ];
+
+        return response()->json($data);
+    }
+    /*
+    _____________________________________________________________________________________________
+    Fatura Raporu
+    _____________________________________________________________________________________________
+    */
+    public function FaturaRaporu(Request $request)
+    {
+        if (!Gate::allows('users_manage')) {
+            return abort(401);
+        }
+
+
+        $tarih      = date('Y-m-d', strtotime($request->enddate_submit . ' + 1 days'));
+
+        $islem_listesi   = Fatura01::where('tipi', '=', 'ALIS')
+                        ->where('durumu', '!=', 'AKTIF')
+                        ->when($request->cariid, function ($query) {
+                            return $query->where('cari01', request('cariid'));
+                        })
+                        ->whereBetween('created_at', [$request->startdate_submit, $tarih])
+                        ->orderBy('id', 'DESC')
+                        ->get();
+
+
+
+
+            $rapor  = view(
+                            'fatura.alis.rapor',
+                            [
+                                'fatura' => $islem_listesi,
+                            ]
+                        )->render();
+
+
+
+
+        
+        $data = [
+            'title' => 'Başarılı!',
+            'text'  => 'Kayıt başarılı',
+            'type'  => 'success',
+            'rapor'  => $rapor,
         ];
 
         return response()->json($data);

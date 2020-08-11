@@ -28,13 +28,6 @@
         
             @if($fatura->durumu =='AKTIF')
 
-                @if(count($urunler) !=0)
-                    <button type="button" class="btn btn-primary FaturaKapat" id="{{ $fatura->id }}"><i class="icon-plus3"></i> Faturayı Kapat</button>
-                @endif
-         
-            <hr>
-
-
             <form id="UrunEkleForm">
             <div class="row">
                 <div class="col-md-4">
@@ -68,6 +61,21 @@
 
         <div id="UrunListesiResponse">   
 
+            @if ($fatura->durumu !='AKTIF')
+
+                <button type="button" class="btn btn-primary FaturaGeriAl" id="{{ $fatura->id }}"><i class="icon-rotate-ccw3"></i> Faturayı Geri Al</button>
+                
+            @else
+
+                @if(count($urunler) !=0)
+                    <button type="button" class="btn btn-primary FaturaKapat" id="{{ $fatura->id }}"><i class="icon-plus3"></i> Faturayı Kapat</button>
+                @endif
+                
+            @endif
+
+    
+        
+        <hr>
 
             <table class="table table-striped table-bordered table-hover table-sm">
                 <thead>
@@ -276,7 +284,7 @@ $(document).ready(function(){
 </script>
 <!-- 
 ____________________________________________________________________________________________
-Ürün Sil
+Fatura Kapat
 ____________________________________________________________________________________________
 -->
 <script type="text/javascript">
@@ -312,6 +320,87 @@ e.preventDefault();
     $.ajax({
             method    : "POST",
             url       : "{{ url('fatura/alis/FaturaKapat') }}",
+            data      : {"id":id},
+            dataType  : "JSON",
+            })
+        .done(function(response) {
+            console.log("Dönen Sonuç: ", response.responseJSON);
+            if(response.type == 'success'){
+
+              Swal.fire({
+                  confirmButton: 'btn btn-success',
+                    title: response.title,
+                    text: response.text,
+                    icon: response.type,
+                    confirmButtonText: 'Tamam'
+                  });
+                 if(response.type == 'success'){ // if true (1)
+                      setTimeout(function(){// wait for 5 secs(2)
+                           location.reload(); // then reload the page.(3)
+                      }, 2000);
+                   }
+              }else{
+                Swal.fire({
+                    confirmButton: 'btn btn-success',
+                    title: response.title,
+                    text: response.text,
+                    icon: response.type,
+                    confirmButtonText: 'Tamam'
+                  });
+              }
+            }).fail(function(response){
+              Swal.fire({
+                    
+                  title: 'HATA!',
+                  text: 'Sistemsel bir hata oluştur lütfen logları inceleyin',
+                  icon: 'error',
+                  confirmButtonText: 'Tamam',
+                  confirmButton: 'btn btn-success',
+                });
+          });
+
+      }
+    });
+});
+</script>
+<!-- 
+____________________________________________________________________________________________
+Fatura Geri AL
+____________________________________________________________________________________________
+-->
+<script type="text/javascript">
+$(document).on('click', '.FaturaGeriAl', function(e){
+e.preventDefault();
+
+  const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger',
+      },
+      buttonsStyling: false,
+    })
+
+    swalWithBootstrapButtons.fire({
+      title: 'Dikkat!',
+      text: "Fatura Geri Alınsınmı?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Evet Geri Al!',
+      cancelButtonText: 'Hayır!',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.value) {
+
+    var id = $(this).attr("id");
+    $.ajaxSetup({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+      });
+
+    $.ajax({
+            method    : "POST",
+            url       : "{{ url('fatura/alis/FaturaGeriAl') }}",
             data      : {"id":id},
             dataType  : "JSON",
             })

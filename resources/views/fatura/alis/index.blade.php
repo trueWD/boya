@@ -57,14 +57,14 @@
                                         
                                         <div class="dropdown-menu">
                                             <button type="button" class="dropdown-item FaturaEdit" id="{{ $row->id }}"><i class="icon-equalizer3"></i> Düzenle</button>
-                                            @if( $row->durumu == "ACIK") 
+                                            @if( $row->durumu == "AKTIF") 
                                             <button type="button" class="dropdown-item text-danger FaturaDelete" id="{{ $row->id }}"><i class="icon-trash"></i> Sil</button>
                                             @endif
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    @if( $row->durumu == "ACIK") 
+                                    @if( $row->durumu == "AKTIF") 
                                         <span class="badge badge-primary">{{ $row->durumu }}</span>
                                     @elseif($row->durumu == "KAPALI")
                                         <span class="badge badge-success">{{ $row->durumu }}</span>
@@ -87,7 +87,65 @@
                 </div>
 
                 <div class="tab-pane fade" id="left-icon-tab2">
-                    Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid laeggin.
+                    
+
+
+
+                     <form id="AlisFaturaRaporuForm">
+
+                        <div class="row">
+
+                            <div class="col-md-3">
+                            
+                            <label>Başlangıç tarihi:</label>
+                            <div class="input-group">
+                                <span class="input-group-prepend">
+                                <span class="input-group-text"><i class="icon-calendar"></i></span>
+                                </span>
+                                <input type="text" data-value="<?php echo date("Y-m-d",time()); ?>" name="startdate" class="form-control startdate">
+                            </div>
+                    
+                            </div>
+                            <div class="col-md-3">
+
+                            <label>Bitiş tarihi:</label>
+                            <div class="input-group">
+                                <span class="input-group-prepend">
+                                <span class="input-group-text"><i class="icon-calendar"></i></span>
+                                </span>
+                                <input type="text" data-value="<?php echo date("Y-m-d",time()); ?>" name="enddate" class="form-control enddate">
+                            </div>
+
+                            </div>
+                            <div class="col-md-6">
+
+                                <div class="form-group">
+                                <label>Cari Adı:</label>
+                                <select class="js-example-basic-single js-states form-control select cariid" name="cariid" id="cariid"></select>
+                            </div>
+
+                            </div>
+                            
+                        </div>
+
+
+
+                        <div class="text-right">
+                            <button type="button" class="btn btn-primary AlisFaturaRaporuSubmit">Rapor Oluştur <i class="icon-filter4 ml-2"></i></button>
+                        </div>
+                    </form>
+
+
+
+                    <div id="AlisFaturaRaporuResponse">
+
+                    </div>
+
+
+
+
+
+
                 </div>
 
             </div>
@@ -104,6 +162,130 @@
         </div>
     </div>
     <!-- /column selectors -->
+
+
+<script>
+  $('#AlisFaturaRaporuForm .startdate').pickadate();
+  $('#AlisFaturaRaporuForm .enddate').pickadate();
+</script>
+
+<script type="text/javascript">
+$( ".AlisFaturaRaporuSubmit" ).click(function() {
+
+  var data = $("#AlisFaturaRaporuForm").serialize();
+
+  $.ajaxSetup({
+      headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+      });
+  $.ajax({
+          method    : "POST",
+          url       : "{{ url('fatura/alis/FaturaRaporu') }}",
+          data      : data,
+          dataType  : "JSON",
+      })
+  .done(function(response) {
+      
+      $("#AlisFaturaRaporuResponse").html(response.rapor);
+
+      $('table.display').DataTable({
+          "lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
+            "order": [[ 0, "desc" ]],
+          buttons: {
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        className: 'btn btn-light',
+                        exportOptions: {
+                            columns: [ 0, ':visible' ]
+                        }
+                    },
+                   {
+                        extend: 'excelHtml5',
+                        title: '<?php echo date('d-m-Y'); ?> Kasa Raporu',
+                        className: 'btn btn-light',
+                        exportOptions: {
+                            columns: ':visible'
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        title: '<?php echo date('d-m-Y'); ?> Kasa Raporu',
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL',
+                        className: 'btn btn-light',
+                        exportOptions: {
+                            columns: [0,1,2,3,4,5,6]
+                        }
+                    },
+                    {
+                        extend: 'colvis',
+                        text: '<i class="icon-three-bars"></i>',
+                        className: 'btn bg-blue btn-icon dropdown-toggle'
+                    }
+                ]
+            }
+          });
+
+      new PNotify({
+          title: response.title,
+          text: response.text,
+          addclass: 'alert bg-success border-success alert-styled-left'
+      });
+
+      })
+  .fail(function(response){
+
+      console.log("Hata: ", response);
+
+    });
+
+});
+
+</script>
+
+ <script>
+   $.fn.modal.Constructor.prototype._enforceFocus = function() {};
+  $(document).ready(function(){
+
+      $('#AlisFaturaRaporuForm #cariid').select2({
+          ajax : {
+              url : '/api/tedarikciler',
+              dataType : 'json',
+              delay : 200,
+              data : function(params){
+                  return {
+                      q : params.term,
+                      page : params.page
+                  };
+              },
+              processResults : function(data, params){
+                  params.page = params.page || 2;
+                  return {
+                      results : data.data,
+                      pagination: {
+                          more : (params.page  * 10) < data.total
+                      }
+                  };
+              }
+          },
+          minimumInputLength : 2,
+          templateResult : function (repo){
+              if(repo.loading) return repo.cariadi;
+              var markup = repo.cariadi;
+              return markup;
+          },
+          templateSelection : function(repo)
+          {
+              return repo.cariadi;
+          },
+          escapeMarkup : function(markup){ return markup; }
+      });
+  });
+</script>
+
+
 
 <script type="text/javascript">
     $(document).on('click', '.FaturaEdit', function (e) {
