@@ -231,7 +231,7 @@ $( ".AlisFaturaRaporuSubmit" ).click(function() {
       new PNotify({
           title: response.title,
           text: response.text,
-          addclass: 'alert bg-success border-success alert-styled-left'
+          addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
       });
 
       })

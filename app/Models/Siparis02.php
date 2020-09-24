@@ -16,10 +16,8 @@ class Siparis02 extends Model
     protected $dates = ['deleted_at'];
 
 
-    /* 	
-    public function cari()
-	{
-		return $this->hasOne('App\Models\Cari01', 'id', 'cariid');
-    } 
-    */
+    public function urunbilgisi()
+    {
+        return $this->hasOne('App\Models\Urun01', 'id', 'urun01');  
+    }
 }

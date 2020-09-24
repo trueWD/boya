@@ -73,14 +73,14 @@
                     new PNotify({
                         title: 'Başarılı!',
                         text: 'İzin başarılı olarak kayıt edildi',
-                        addclass: 'alert bg-success border-success alert-styled-left'
+                        addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
                     });
                 },
                 error: function(){
                     new PNotify({
                         title: 'Hata!',
                         text: 'Ters giden birşeyler var :(' ,
-                        addclass: 'alert bg-danger border-danger alert-styled-left'
+                        addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
                     });
                 }
             });

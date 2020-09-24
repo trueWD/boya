@@ -11,6 +11,13 @@
 		<span> Dashboard</span>
 	</a>
 </li>
+<!-- Main -->
+<li class="nav-item">
+	<a href="{{ url('satis') }}" class="nav-link {{ request()->is('satis','satis/*') ? 'active' : '' }}">
+		<i class="icon-basket"></i>
+		<span> SICAK SATIŞ</span>
+	</a>
+</li>
 
 <!-- Piyasa -->
 <li class="nav-item nav-item-submenu {{ request()->is('siparis/icpiyasa','siparis/icpiyasa/*') ? 'nav-item-expanded nav-item-open' : '' }}">

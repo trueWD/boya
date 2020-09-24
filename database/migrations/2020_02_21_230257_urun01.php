@@ -20,6 +20,8 @@ class Urun01 extends Migration
             $table->string('miktar')->nullable();
             $table->string('grubu')->nullable();
             $table->string('fiyat')->nullable();
+            $table->string('kdv')->nullable();
+            $table->string('satis_fiyat')->nullable();
             $table->string('fiyat_grubu')->nullable();
             $table->string('stok')->nullable();
             $table->string('satilan')->nullable();

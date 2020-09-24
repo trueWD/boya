@@ -20,4 +20,16 @@ class Siparis01 extends Model
 	{
 		return $this->hasOne('App\Models\Cari01', 'id', 'cariid');
     }
+	public function user()
+	{
+		return $this->hasOne('App\User', 'id', 'userid');
+    }
+    public function siparis02()
+    {
+        return $this->hasMany('App\Models\Siparis02', 'siparis01', 'id');
+    }
+
+
+
+
 }

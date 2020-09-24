@@ -216,14 +216,14 @@ e.preventDefault();
                     new PNotify({
                         title: response.title,
                         text: response.text,
-                        addclass: 'alert bg-info border-info alert-styled-left'
+                        addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
                     });
                     }else{
 
                     new PNotify({
                         title: response.title,
                         text: response.text,
-                        addclass: 'alert bg-danger border-danger alert-styled-left'
+                        addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
                     });
                     }
                   }).fail(function(response){

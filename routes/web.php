@@ -1,4 +1,5 @@
 <?php
+
 Route::redirect('/', '/home');
 
 Auth::routes(['register' => false]);
@@ -97,19 +98,7 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('cari/update', ['uses' => 'Cari\CariController@update','as' => 'cari.update']);
    Route::get('cari/{id}', ['uses' => 'Cari\CariController@show','as' => 'cari.show']);
 
-   //Tedarik
-   Route::get('tedarik', ['uses' => 'Tedarik\TedarikController@index','as' => 'tedarik.index']);
-   Route::post('tedarik/create', ['uses' => 'Tedarik\TedarikController@create','as' => 'tedarik.create']);
-   Route::post('tedarik/SiparisIptal', ['uses' => 'Tedarik\TedarikController@SiparisIptal','as' => 'tedarik.SiparisIptal']);
 
-  
-   //Uretim
-   Route::get('uretim', ['uses' => 'Uretim\UretimController@¨¨','as' => 'uretim.index']);
-   Route::post('uretim/SiparisListesi', ['uses' => 'Uretim\UretimController@SiparisListesi','as' => 'uretim.SiparisListesi']);
-   Route::post('uretim/UretimeEkle', ['uses' => 'Uretim\UretimController@UretimeEkle','as' => 'uretim.UretimeEkle']);
-   Route::post('uretim/UretimSil', ['uses' => 'Uretim\UretimController@UretimSil','as' => 'uretim.UretimSil']);
-   Route::post('uretim/SiralamaDegis', ['uses' => 'Uretim\UretimController@SiralamaDegis','as' => 'uretim.SiralamaDegis']);
-   
    //Fatura Alış Faturası
    Route::get('fatura/alis', ['uses' => 'Fatura\FaturaAlisController@index','as' => 'fatura.alis.index']);
    Route::post('fatura/alis', ['uses' => 'Fatura\FaturaAlisController@store','as' => 'fatura.alis.store']);
@@ -125,8 +114,17 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('fatura/alis/FaturaGeriAl', ['uses' => 'Fatura\FaturaAlisController@FaturaGeriAl','as' => 'fatura.alis.FaturaGeriAl']);
    Route::post('fatura/alis/FaturaRaporu', ['uses' => 'Fatura\FaturaAlisController@FaturaRaporu','as' => 'fatura.alis.FaturaRaporu']);
    
-
    
+   // Satış
+
+
+   Route::get('satis', ['uses' => 'Satis\SatisController@index','as' => 'satis.index']);
+   Route::get('satis/store', ['uses' => 'Satis\SatisController@store','as' => 'satis.store']);
+   Route::get('satis/{id}', ['uses' => 'Satis\SatisController@show', 'as' => 'satis.show']);
+   Route::post('satis/BarkodOku', ['uses' => 'Satis\SatisController@BarkodOku', 'as' => 'satis.BarkodOku']);
+   Route::post('satis/NakitKapat', ['uses' => 'Satis\SatisController@NakitKapat', 'as' => 'satis.NakitKapat']);
+   Route::post('satis/KartKapat', ['uses' => 'Satis\SatisController@KartKapat', 'as' => 'satis.KartKapat']);
+   Route::post('satis/VeresiyeKapat', ['uses' => 'Satis\SatisController@VeresiyeKapat', 'as' => 'satis.VeresiyeKapat']);
 
   
   
