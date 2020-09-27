@@ -92,7 +92,70 @@ class SatisController extends Controller
 
         $siparis01     = Siparis01::with('siparis02')->where('id', '=', $request->id)->first();
 
-        $guncelle     = Siparis02::where('urun01', '=', $urun01->id)->first();
+        $guncelle     = Siparis02::where('urun01', '=', $urun01->id)->where('siparis01', '=', $siparis01->id)->first();
+
+
+        if($guncelle == NULL){
+            // Ürün yoksa
+
+            $ekle                   = new Siparis02;
+            $ekle->siparis01        = $siparis01->id;
+            $ekle->urun01           = $urun01->id;
+            $ekle->birim            = $urun01->birim;
+            $ekle->miktar           = 1;
+            $ekle->fiyat            = $urun01->satis_fiyat;
+            $ekle->iskonto          = $request->iskonto;
+            $ekle->kdv              = $urun01->kdv;
+            $ekle->iskonto          = 0;
+            $ekle->userid           = $user->id;
+            $ekle->save();
+            
+            
+        }else{
+            // Bu siparişte zaten bu ürün varise
+
+
+            $guncelle->miktar = $guncelle->miktar + 1;
+
+            $guncelle->save();
+            
+            
+
+        }
+        $data = [
+            'title' => 'BAŞARILI',
+            'text' => 'Ürün Eklendi...',
+            'type' => 'success',
+        ];
+        return response()->json($data);
+
+    }
+    /*
+    _____________________________________________________________________________________________
+   Ürün id oku ürün ekle
+    _____________________________________________________________________________________________
+    */
+    public function UrunGiris(Request $request)
+    {
+
+    
+        $urun01     = Urun01::where('id', '=', $request->urunid)->first();
+        $user       = User::find(auth()->id());
+
+        //dd($urun01);
+
+        if($urun01 == NULL){
+            $data = [
+                'title' => 'HATA!',
+                'text' => 'Böyle bir ürün yok!',
+                'type' => 'warning',
+            ];
+            return response()->json($data);
+        }
+
+        $siparis01     = Siparis01::with('siparis02')->where('id', '=', $request->id)->first();
+
+        $guncelle     = Siparis02::where('urun01', '=', $urun01->id)->where('siparis01', '=', $siparis01->id)->first();
 
 
         if($guncelle == NULL){
@@ -165,6 +228,16 @@ class SatisController extends Controller
             $kdvDahilToplam     = $kdvDahilToplam + $kdvDahil;
             $kdvMiktarToplam    = $kdvMiktarToplam + $kdvMiktar;
             $iskontoTutarToplam = $iskontoTutarToplam + $iskontoTutar;
+
+            // Stok kartını güncelle
+
+            $urun01     = Urun01::findOrFail($row->urun01);
+            $urun01->stok      = $urun01->stok - $row->miktar;
+            $urun01->satilan   = $urun01->satilan + $row->miktar;
+            $urun01->save();
+
+
+
         }
 
 
@@ -187,4 +260,135 @@ class SatisController extends Controller
         return response()->json($data);
 
     }
+    /*
+    _____________________________________________________________________________________________
+    Ürün Arttır
+    _____________________________________________________________________________________________
+    */
+    public function UrunArtir(Request $request)
+    {
+
+        $siparis02          = Siparis02::findOrFail($request->id);
+        $siparis02->miktar  = $siparis02->miktar + 1;
+        $siparis02->save();
+        $data = [
+            'title' => 'BAŞARILI',
+            'text' => 'Ürün miktarı çoğaştıldı...',
+            'type' => 'success',
+        ];
+        return response()->json($data);
+
+    }
+    /*
+    _____________________________________________________________________________________________
+    Ürün Azalt
+    _____________________________________________________________________________________________
+    */
+    public function UrunAzalt(Request $request)
+    {
+
+        $siparis02              = Siparis02::findOrFail($request->id);
+        if($siparis02->miktar == 1){
+
+            $data = [
+                'title' => 'UYARI',
+                'text' => 'Son 1 ürün silinmez...',
+                'type' => 'warning',
+            ];
+            return response()->json($data);
+
+        }else{
+
+            $siparis02->miktar      = $siparis02->miktar - 1;
+            $siparis02->save();
+        }
+
+        $data = [
+            'title' => 'BAŞARILI',
+            'text' => 'Ürün miktarı azaltıldı...',
+            'type' => 'success',
+        ];
+        return response()->json($data);
+
+    }
+    /*
+    _____________________________________________________________________________________________
+    Ürün Azalt
+    _____________________________________________________________________________________________
+    */
+    public function UrunSil(Request $request)
+    {
+
+        Siparis02::where('id', '=', $request->id)->delete();
+
+        $data = [
+            'title' => 'BAŞARILI',
+            'text' => 'Ürün silindi...',
+            'type' => 'success',
+        ];
+        return response()->json($data);
+
+    }
+    /*
+    _____________________________________________________________________________________________
+    Fiş İptal
+    _____________________________________________________________________________________________
+    */
+    public function FisIptal(Request $request)
+    {
+
+        $siparis01     = Siparis01::findOrFail($request->id);
+
+        Siparis02::where('siparis01','=', $siparis01->id)->update(['deleted_at' => now()]);
+
+        $siparis01->delete();
+
+
+        $data = [
+            'title' => 'BAŞARILI',
+            'text' => 'Fiş iptal edildi...',
+            'type' => 'success',
+        ];
+        return response()->json($data);
+
+    }
+    /*
+    _____________________________________________________________________________________________
+    Fiş Yazdır
+    _____________________________________________________________________________________________
+    */
+    public function FisYazdir($id)
+    {
+
+        $siparis01     = Siparis01::with('siparis02')->findOrFail($id);
+        $siparis02     = Siparis02::with('urunbilgisi')->where('siparis01', '=', $siparis01->id)->get();
+
+        return view('satis.yazdir', compact('siparis01', 'siparis02'));
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

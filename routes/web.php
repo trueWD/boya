@@ -122,11 +122,19 @@ Route::group(['middleware' => ['auth']], function () {
    Route::get('satis/store', ['uses' => 'Satis\SatisController@store','as' => 'satis.store']);
    Route::get('satis/{id}', ['uses' => 'Satis\SatisController@show', 'as' => 'satis.show']);
    Route::post('satis/BarkodOku', ['uses' => 'Satis\SatisController@BarkodOku', 'as' => 'satis.BarkodOku']);
+   Route::post('satis/UrunGiris', ['uses' => 'Satis\SatisController@UrunGiris', 'as' => 'satis.UrunGiris']);
+   Route::post('satis/UrunArtir', ['uses' => 'Satis\SatisController@UrunArtir', 'as' => 'satis.UrunArtir']);
+   Route::post('satis/UrunAzalt', ['uses' => 'Satis\SatisController@UrunAzalt', 'as' => 'satis.UrunAzalt']);
+   Route::post('satis/UrunSil', ['uses' => 'Satis\SatisController@UrunSil', 'as' => 'satis.UrunSil']);
+   Route::post('satis/FisIptal', ['uses' => 'Satis\SatisController@FisIptal', 'as' => 'satis.FisIptal']);
    Route::post('satis/NakitKapat', ['uses' => 'Satis\SatisController@NakitKapat', 'as' => 'satis.NakitKapat']);
+   
+   Route::get('satis/FisYazdir/{id}', ['uses' => 'Satis\SatisController@FisYazdir', 'as' => 'satis.FisYazdir']);
+  
+
    Route::post('satis/KartKapat', ['uses' => 'Satis\SatisController@KartKapat', 'as' => 'satis.KartKapat']);
    Route::post('satis/VeresiyeKapat', ['uses' => 'Satis\SatisController@VeresiyeKapat', 'as' => 'satis.VeresiyeKapat']);
 
-  
   
   
 });

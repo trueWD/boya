@@ -25,7 +25,7 @@
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label">ÜRÜN BARKODU:</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="barkod" id="barkod" placeholder="Barkod" autocomplete="off">
+                            <input type="text" class="form-control" name="barkod" id="barkod" placeholder="Barkod" autocomplete="off" autofocus>
                         </div>
                         <div class="col-lg-3">
                             <input type="hidden" name="id" value="{{ $siparis01->id }}">
@@ -43,7 +43,7 @@
                         </div>
                         <div class="col-lg-3">
                             <input type="hidden" name="id" value="{{ $siparis01->id }}">
-                            <button type="button" class="btn btn-warning"><i class="icon-checkmark mr-1 icon-1x"></i> EKLE</button>
+                            <button type="button" class="btn btn-warning UrunGirisSubmit"><i class="icon-checkmark mr-1 icon-1x"></i> EKLE</button>
                         </div>
                     </div>
 
@@ -106,8 +106,8 @@
                     <form id="NakitKapatForm">
 
                    
-                    <button type="button" class="btn btn-success NakitKapatSubmit"><i class="icon-basket mr-1"></i> FİŞ KAPAT</button>
-                    <button type="button" class="btn bg-purple-400"><i class="icon-printer mr-1"></i> YAZDIR</button>
+                    <button type="button" class="btn btn-success NakitKapatSubmit"><i class="icon-basket mr-1"></i> NAKİT KAPAT</button>
+                    <button type="button" class="btn btn-danger FisIptalButton" id="{{ $siparis01->id }}"><i class="icon-trash mr-1"></i> FİŞ İPTAL</button>
                     <input type="hidden" name="id" value="{{ $siparis01->id }}">
                     <hr>
                     <div class="table-responsive">
@@ -213,12 +213,18 @@
     
     <div class="card-body tab-content">
         <div class="tab-pane fade show active" id="urun-tab1">
-            
 
-            <table class="table table-striped table-bordered table-hover myDataTable1">
+        @if($siparis01->durumu=='TAMAM')
+        <a href="{{ url('satis/FisYazdir/'.$siparis01->id) }}" target="_blank" class="btn bg-purple-400"><i class="icon-printer mr-1"></i> YAZDIR</a>
+        @endif
+
+        <table class="table table-striped table-bordered table-hover myDataTable1">
             <thead>
                 <tr>
-                    <th>#</th>
+                    
+                    @if($siparis01->durumu=='AKTIF')
+                        <th>#</th>
+                    @endif
                     <th>BARKOD</th>
                     <th>ÜRÜN</th>
                     <th>M. ADET</th>
@@ -227,6 +233,10 @@
                     <th>İSKONTO</th>
                     <th>KDV</th>
                     <th>G TOPLAM</th>
+                    @if($siparis01->durumu=='AKTIF')
+                        <th>SİL</th>
+                    @endif
+                    
                 </tr>
             </thead>
             <tbody>
@@ -250,20 +260,14 @@
                     $araToplam          = $araToplam + $toplam;
                 @endphp
                 <tr>
-                    <td>
-                        <div class="btn-group btn-group-sm">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                <i class="icon-menu7"></i>
-                            </button>
 
-                            <div class="dropdown-menu">
-                                <a href="{{ url('siparis/'.$row->id) }}" class="dropdown-item"><i class="icon-file-eye"></i> Göster</a>
-                                <button type="button" class="dropdown-item SiparisEdit" id="{{ $row->id }}"><i class="icon-equalizer3"></i> Düzenle</button>
-                                <div class="dropdown-divider"></div>
-                                <button type="button" class="dropdown-item text-danger rowDelete" id="{{ $row->id }}"><i class="icon-trash"></i> Sil</button>
-                            </div>
-                        </div>
+                    @if($siparis01->durumu=='AKTIF')
+                    <td>
+                        <button type="button" class="btn btn-success btn-sm UrunArtirButton" id="{{ $row->id }}"><i class="icon-plus2"></i></button>
+                        <button type="button" class="btn btn-warning btn-sm UrunAzaltButton" id="{{ $row->id }}"><i class="icon-minus2"></i></button>
                     </td>
+                    @endif
+                    
                     <td>{{ $row->urunbilgisi->barkod }}</td>
                     <td>{{ $row->urunbilgisi->urunadi }}</td>
                     <td class="text-right">{{ para($row->miktar) }}</td>
@@ -272,6 +276,13 @@
                     <td class="text-right">-{{ para($iskontoTutar) }} (%{{ $row->iskonto }})</td>
                     <td class="text-right">{{ para($kdvMiktar) }} (%{{ $row->kdv }})</td>
                     <td class="text-right">{{ para($kdvDahil) }}</td>
+
+                    @if($siparis01->durumu=='AKTIF')
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm UrunSilButton" id="{{ $row->id }}"><i class="icon-trash"></i></button>
+                    </td>
+                    @endif
+                    
 
                 </tr>
                 @endforeach
@@ -287,7 +298,7 @@
                   <td class="table-primary text-right"><b>{{ para($araToplam) }} TL</b></td>
                 </tr>
                 <tr>
-                  <≈td class="text-right">Toplam  </≈td>
+                  <td class="text-right">Toplam İskhtonto</td>
                   <td class="table-success text-right"><b>{{ para($iskontoTutarToplam) }} TL</b></td>
                 </tr>
                 <tr>
@@ -391,22 +402,88 @@ $.ajax({
     .done(function(response) {  
         if(response.type == 'success'){
 
+            new PNotify({
+                title: response.title,
+                text: response.text,
+                addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
+            });
 
-            
-            $("#UrunListesiResponse").html(response.urun_listesi);
 
-        new PNotify({
-            title: response.title,
-            text: response.text,
-             addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
-        });
+
+            setTimeout(function(){
+                location.reload(); 
+            }, 1000); 
+
+
+
         }else{
 
+            new PNotify({
+                title: response.title,
+                text: response.text,
+                addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
+            });
+        }
+        }).fail(function(response){
+
         new PNotify({
-            title: response.title,
-            text: response.text,
-            addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
+            title: 'Hata!',
+            text: 'Ters giden birşeyler var :(' ,
+            addclass: 'alert bg-danger border-danger alert-styled-left'
         });
+
+    });
+});
+</script>
+<!-- 
+____________________________________________________________________________________________
+Ürün Adı Okuma
+____________________________________________________________________________________________
+-->
+<script type="text/javascript">
+$(document).on('click', '.UrunGirisSubmit', function(e){
+e.preventDefault();
+ 
+var data = $("#UrunGirisForm").serialize();
+
+$.ajaxSetup({
+    headers: {
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+$.ajax({
+        method    : "POST",
+        url       : "{{ url('satis/UrunGiris') }}",
+        data      : data,
+        dataType  : "JSON",
+        })
+    .done(function(response) {  
+        if(response.type == 'success'){
+
+            new PNotify({
+                title: response.title,
+                text: response.text,
+                addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
+            });
+
+            setTimeout(function(){
+                location.reload(); 
+            }, 1000); 
+
+
+
+        }else{
+
+            new PNotify({
+                title: response.title,
+                text: response.text,
+                addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
+            });
+
+            setTimeout(function(){
+                location.reload(); 
+            }, 1000); 
+
         }
         }).fail(function(response){
 
@@ -496,6 +573,227 @@ e.preventDefault();
             });
       }
 });
+</script>
+<!-- 
+___________________________________________________________________________________________________
+Ürün Artırma
+___________________________________________________________________________________________________
+-->
+<script type="text/javascript">
+
+    $(document).on('click', '.UrunArtirButton', function (e) {
+    e.preventDefault();
+
+    var id = $(this).attr("id");
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+        });
+
+    $.ajax({
+        method    : "POST",
+        url       : "{{ url('satis/UrunArtir') }}",
+        data      : {"id":id},
+        dataType  : "JSON",
+    })
+    .done(function(response) {
+
+        
+        new PNotify({
+            title: response.title,
+            text: response.text,
+            addclass: 'alert bg-primary border-success alert-styled-left'
+        });
+
+        setTimeout(function(){
+            location.reload(); 
+        }, 1000); 
+    })
+  .fail(function(response) {
+
+    console.log("Hata: ", response);
+
+    });           
+});
+
+</script>
+<!-- 
+___________________________________________________________________________________________________
+Fiş İptal
+___________________________________________________________________________________________________
+-->
+<script type="text/javascript">
+
+    $(document).on('click', '.FisIptalButton', function (e) {
+    e.preventDefault();
+
+    var id = $(this).attr("id");
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+        });
+
+    $.ajax({
+        method    : "POST",
+        url       : "{{ url('satis/FisIptal') }}",
+        data      : {"id":id},
+        dataType  : "JSON",
+    })
+    .done(function(response) {
+
+        
+        new PNotify({
+            title: response.title,
+            text: response.text,
+            addclass: 'alert bg-primary border-success alert-styled-left'
+        });
+
+        setTimeout(function(){
+            window.location.replace("{{ url('satis') }}"); 
+        }, 1000); 
+    })
+  .fail(function(response) {
+
+    console.log("Hata: ", response);
+
+    });           
+});
+
+</script>
+<!-- 
+___________________________________________________________________________________________________
+Ürün Azaltma
+___________________________________________________________________________________________________
+-->
+<script type="text/javascript">
+
+    $(document).on('click', '.UrunAzaltButton', function (e) {
+    e.preventDefault();
+
+    var id = $(this).attr("id");
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+        });
+
+    $.ajax({
+        method    : "POST",
+        url       : "{{ url('satis/UrunAzalt') }}",
+        data      : {"id":id},
+        dataType  : "JSON",
+    })
+    .done(function(response) {
+
+        
+        new PNotify({
+            title: response.title,
+            text: response.text,
+            addclass: 'alert bg-primary border-success alert-styled-left'
+        });
+
+        setTimeout(function(){
+            location.reload(); 
+        }, 1000); 
+    })
+  .fail(function(response) {
+
+    console.log("Hata: ", response);
+
+    });           
+});
+
+</script>
+<!-- 
+___________________________________________________________________________________________________
+Ürün SİLME
+___________________________________________________________________________________________________
+-->
+<script>
+    $(document).on('click', '.UrunSilButton', function(){
+
+      const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false,
+    })
+
+    swalWithBootstrapButtons.fire({
+      title: 'Dikkat!',
+      text: "Ürün listeden silinsin mi?",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Evet, Sil',
+      cancelButtonText: 'Hayır!',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.value) {
+
+    var id = $(this).attr("id");
+
+    $.ajaxSetup({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+      });
+
+    $.ajax({
+            method    : "POST",
+            url       : "{{ url('satis/UrunSil') }}",
+            data      : {"id":id},
+            dataType  : "JSON",
+            })
+        .done(function(response) {
+            console.log("Dönen Sonuç: ", response.responseJSON);
+            if(response.type == 'success'){
+
+              Swal.fire({
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger',
+                    title: response.title,
+                    text: response.text,
+                    type: response.type,
+                    confirmButtonText: 'Tamam'
+                  });
+                 if(response.type == 'success'){ // if true (1)
+                     setTimeout(function(){// wait for 5 secs(2)
+                           location.reload(); // then reload the page.(3)
+                      }, 2000); 
+                   }
+              }else{
+
+                Swal.fire({
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger',
+                    title: response.title,
+                    text: response.text,
+                    type: response.type,
+                    confirmButtonText: 'Tamam'
+                  });
+              }
+            }).fail(function(response){
+              Swal.fire({
+                  confirmButton: 'btn btn-success',
+                  cancelButton: 'btn btn-danger',
+                  title: 'HATA!',
+                  text: 'Sistemsel bir hata oluştur lütfen logları inceleyin',
+                  type: 'error',
+                  confirmButtonText: 'Tamam'
+                });
+          });
+
+      }
+    });
+    return false;
+
+    });
 </script>
 @endif
 
