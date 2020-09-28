@@ -135,7 +135,11 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('satis/KartKapat', ['uses' => 'Satis\SatisController@KartKapat', 'as' => 'satis.KartKapat']);
    Route::post('satis/VeresiyeKapat', ['uses' => 'Satis\SatisController@VeresiyeKapat', 'as' => 'satis.VeresiyeKapat']);
 
-  
+
+   //BANKA 
+   Route::get('banka', ['uses' => 'Banka\BankaController@index', 'as' => 'banka.index']);
+   Route::post('banka', ['uses' => 'Banka\BankaController@store', 'as' => 'satis.store']);
+   Route::post('banka/destroy', ['uses' => 'Banka\BankaController@destroy', 'as' => 'banka.destroy']);
   
 });
 

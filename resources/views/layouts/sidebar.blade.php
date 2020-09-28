@@ -89,12 +89,12 @@
 </li>
 
 <!-- Users And ALC -->
-<li class="nav-item nav-item-submenu {{ request()->is('settings','settings/*','params','params/*') ? 'nav-item-expanded nav-item-open' : '' }}">
+<li class="nav-item nav-item-submenu {{ request()->is('settings','settings/*','params','params/*','banka','banka/*') ? 'nav-item-expanded nav-item-open' : '' }}">
 	<a href="#" class="nav-link"><i class="icon-cog2"></i> <span>SİSTEM AYARLARI</span></a>
 	<ul class="nav nav-group-sub" data-submenu-title="SİSTEM AYARLARI">
 		<li class="nav-item"><a href="{{ url('settings') }}" class="nav-link {{ request()->is('settings') ? 'active' : '' }}">Genel Ayarlar</a></li>
 		<li class="nav-item"><a href="{{ url('params') }}" class="nav-link {{ request()->is('params') ? 'active' : '' }}">Parametre Ayarları</a></li>
-		<li class="nav-item"><a href="{{ url('settings/onay') }}" class="nav-link {{ request()->is('settings/onay') ? 'active' : '' }}">Onaylama Yönetimi</a></li>
+		<li class="nav-item"><a href="{{ url('banka') }}" class="nav-link {{ request()->is('banka') ? 'active' : '' }}">Banka Hesapları</a></li>
 		<li class="nav-item"><a href="{{ url('settings/depo') }}" class="nav-link {{ request()->is('settings/depo') ? 'active' : '' }}">Depo Yönetimi</a></li>
 	</ul>		
 </li>
