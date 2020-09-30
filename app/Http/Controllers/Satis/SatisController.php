@@ -9,9 +9,10 @@ use App\Models\Cari01;
 use App\Models\Siparis01;
 use App\Models\Urun01;
 use App\Models\Siparis02;
+use App\Models\Banka01;
 use App\User;
 use App\Models\Params;
-use App\Http\Requests\Cari\StoreCariRequest;
+use App\Http\Requests\Satis\VeresiyeKapatRequest;
 
 class SatisController extends Controller
 {
@@ -61,11 +62,13 @@ class SatisController extends Controller
             return abort(401);
         }
 
-        $siparis01     = Siparis01::with('siparis02')->findOrFail($id);
-        $siparis02     = Siparis02::with('urunbilgisi')->where('siparis01','=', $siparis01->id)->get();
+        $siparis01      = Siparis01::with('siparis02')->findOrFail($id);
+        $siparis02      = Siparis02::with('urunbilgisi')->where('siparis01','=', $siparis01->id)->get();
+        $banka01        = Banka01::all();
+
 
        // dd($siparis02);
-        return view('satis.show', compact('siparis01','siparis02'));
+        return view('satis.show', compact('siparis01','siparis02','banka01'));
 
     }
     /*
@@ -248,6 +251,146 @@ class SatisController extends Controller
         $siparis01->toplam_kdv      = $kdvMiktarToplam;
         $siparis01->toplam_iskonto  = $iskontoTutarToplam;
         $siparis01->odemetipi       = "NAKIT";
+        $siparis01->userid          = auth()->id();
+        $siparis01->save();
+            
+ 
+        $data = [
+            'title' => 'BAŞARILI',
+            'text' => 'Satış kapatıldı...',
+            'type' => 'success',
+        ];
+        return response()->json($data);
+
+    }
+    /*
+    _____________________________________________________________________________________________
+    KART Kapat
+    _____________________________________________________________________________________________
+    */
+    public function KartKapat(Request $request)
+    {
+
+        $siparis01      = Siparis01::with('siparis02')->findOrFail($request->id);
+        $banka01        = Banka01::findOrFail($request->banka01);
+
+        //dd($urun01);
+
+        if($siparis01->durumu != 'AKTIF'){
+            $data = [
+                'title' => 'HATA!',
+                'text' => 'Bu fiş kapalı!',
+                'type' => 'warning',
+            ];
+            return response()->json($data);
+        }
+
+        $kdvDahilToplam = 0;
+        $kdvMiktarToplam = 0;
+        $iskontoTutarToplam = 0;
+        foreach ($siparis01->siparis02 as $row) {
+
+            $toplam             = $row->fiyat * $row->miktar;
+            $iskontoTutar       = $toplam * ($row->iskonto / 100);
+            $iskontoluToplam    = $toplam - $iskontoTutar;
+            $kdvMiktar          = $iskontoluToplam * ($row->kdv / 100);
+            $kdvDahil           = $iskontoluToplam + $kdvMiktar;
+
+            $kdvDahilToplam     = $kdvDahilToplam + $kdvDahil;
+            $kdvMiktarToplam    = $kdvMiktarToplam + $kdvMiktar;
+            $iskontoTutarToplam = $iskontoTutarToplam + $iskontoTutar;
+
+            // Stok kartını güncelle
+
+            $urun01             = Urun01::findOrFail($row->urun01);
+            $urun01->stok       = $urun01->stok - $row->miktar;
+            $urun01->satilan    = $urun01->satilan + $row->miktar;
+            $urun01->save();
+
+
+
+        }
+       
+        // Banka güncelle
+        $banka01->bakiye    = $banka01->bakiye + $kdvDahilToplam;
+        $banka01->save();
+        
+        $siparis01->durumu          = 'TAMAM';
+        $siparis01->toplam_tutar    = $kdvDahilToplam;
+        $siparis01->toplam_kdv      = $kdvMiktarToplam;
+        $siparis01->toplam_iskonto  = $iskontoTutarToplam;
+        $siparis01->banka01         = $banka01->id;
+        $siparis01->odemetipi       = "KART";
+        $siparis01->userid          = auth()->id();
+        $siparis01->save();
+            
+ 
+        $data = [
+            'title' => 'BAŞARILI',
+            'text' => 'Satış kapatıldı...',
+            'type' => 'success',
+        ];
+        return response()->json($data);
+
+    }
+    /*
+    _____________________________________________________________________________________________
+    Veresiye Kapat
+    _____________________________________________________________________________________________
+    */
+    public function VeresiyeKapat(VeresiyeKapatRequest $request)
+    {
+
+        $siparis01      = Siparis01::with('siparis02')->findOrFail($request->id);
+        $cari01         = Cari01::findOrFail($request->cariid);
+
+        //dd($urun01);
+
+        if($siparis01->durumu != 'AKTIF'){
+            $data = [
+                'title' => 'HATA!',
+                'text' => 'Bu fiş kapalı!',
+                'type' => 'warning',
+            ];
+            return response()->json($data);
+        }
+
+        $kdvDahilToplam = 0;
+        $kdvMiktarToplam = 0;
+        $iskontoTutarToplam = 0;
+        foreach ($siparis01->siparis02 as $row) {
+
+            $toplam             = $row->fiyat * $row->miktar;
+            $iskontoTutar       = $toplam * ($row->iskonto / 100);
+            $iskontoluToplam    = $toplam - $iskontoTutar;
+            $kdvMiktar          = $iskontoluToplam * ($row->kdv / 100);
+            $kdvDahil           = $iskontoluToplam + $kdvMiktar;
+
+            $kdvDahilToplam     = $kdvDahilToplam + $kdvDahil;
+            $kdvMiktarToplam    = $kdvMiktarToplam + $kdvMiktar;
+            $iskontoTutarToplam = $iskontoTutarToplam + $iskontoTutar;
+
+            // Stok kartını güncelle
+
+            $urun01             = Urun01::findOrFail($row->urun01);
+            $urun01->stok       = $urun01->stok - $row->miktar;
+            $urun01->satilan    = $urun01->satilan + $row->miktar;
+            $urun01->save();
+
+
+
+        }
+       
+        // Banka güncelle
+        
+        $siparis01->durumu          = 'TAMAM';
+        $siparis01->toplam_tutar    = $kdvDahilToplam;
+        $siparis01->toplam_kdv      = $kdvMiktarToplam;
+        $siparis01->toplam_iskonto  = $iskontoTutarToplam;
+        $siparis01->cari01          = $cari01->id;
+        $siparis01->tarih_vade      = $request->tarih_vade_submit;
+        $siparis01->anlasma         = $request->anlasma;
+        $siparis01->odemetipi       = "VERESIYE";
         $siparis01->userid          = auth()->id();
         $siparis01->save();
             

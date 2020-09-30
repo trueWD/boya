@@ -20,11 +20,11 @@
 </li>
 
 <!-- Piyasa -->
-<li class="nav-item nav-item-submenu {{ request()->is('siparis/icpiyasa','siparis/icpiyasa/*') ? 'nav-item-expanded nav-item-open' : '' }}">
+<li class="nav-item nav-item-submenu {{ request()->is('tahsilat','tahsilat/*') ? 'nav-item-expanded nav-item-open' : '' }}">
 	<a href="#" class="nav-link"><i class="icon-folder-download"></i> <span>SATIŞ YÖNETİMi</span></a>
 
 	<ul class="nav nav-group-sub" data-submenu-title="İÇ PİYASA">
-		<li class="nav-item"><a href="{{ url('siparis/icpiyasa') }}" class="nav-link {{ request()->is('siparis/icpiyasa','siparis/icpiyasa/{id}') ? 'active' : '' }}">Sipariş Listesi</a></li>
+		<li class="nav-item"><a href="{{ url('tahsilat') }}" class="nav-link {{ request()->is('stahsilat','tahsilat/*') ? 'active' : '' }}">Tahsilat İşlemleri</a></li>
 	</ul>		
 </li>
 

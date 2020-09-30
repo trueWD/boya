@@ -406,12 +406,12 @@ class FaturaAlisController extends Controller
 
 
 
-            $rapor  = view(
-                            'fatura.alis.rapor',
-                            [
-                                'fatura' => $islem_listesi,
-                            ]
-                        )->render();
+        $rapor  = view(
+                        'fatura.alis.rapor',
+                        [
+                            'fatura' => $islem_listesi,
+                        ]
+                    )->render();
 
 
 

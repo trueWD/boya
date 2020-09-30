@@ -75,7 +75,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#card-tab2" class="nav-link" data-toggle="tab">
+                            <a href="#card-tab3" class="nav-link" data-toggle="tab">
                                 <i class="icon-notebook mr-2"></i>
                                 VERESİYE
                             </a>
@@ -106,7 +106,7 @@
                     <form id="NakitKapatForm">
 
                    
-                    <button type="button" class="btn btn-success NakitKapatSubmit"><i class="icon-basket mr-1"></i> NAKİT KAPAT</button>
+                    <button type="button" class="btn btn-success NakitKapatSubmit"><i class="icon-cash3 mr-1"></i> NAKİT ÖDEME</button>
                     <button type="button" class="btn btn-danger FisIptalButton" id="{{ $siparis01->id }}"><i class="icon-trash mr-1"></i> FİŞ İPTAL</button>
                     <input type="hidden" name="id" value="{{ $siparis01->id }}">
                     <hr>
@@ -156,11 +156,122 @@
                 </div>
 
                 <div class="tab-pane fade" id="card-tab2">
-                    This is the second card tab content
+                    
+
+
+                    <form id="KartKapatForm">
+
+                    
+                        <button type="button" class="btn btn-success KartKapatSubmit"><i class="icon-credit-card mr-1"></i> KART ÖDEME</button>
+                        <button type="button" class="btn btn-danger FisIptalButton" id="{{ $siparis01->id }}"><i class="icon-trash mr-1"></i> FİŞ İPTAL</button>
+                        <input type="hidden" name="id" value="{{ $siparis01->id }}">
+                        <hr>
+                        <div class="table-responsive">
+
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            BANKA
+                                        </td>
+                                        <td>
+                                            <select class="form-control" name="banka01">
+                                                @foreach ($banka01 as $row)
+                                                   <option value="{{ $row->id }}">{{ $row->adi }} - {{ $row->sube }}</option>  
+                                                @endforeach
+                                               
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <h3 class="">TOPLAM</h3>
+                                        </td>
+
+                                        <td>
+                                            <h3 class="text-right text-primary"><b>{{ para($genel_toplam) }} TL</b></h3>
+                                        </td>
+                                    </tr>
+    
+                                </tbody>
+                            </table>
+
+                            
+                        </div>
+
+                    </form>
+
+
+
+
+
+
+
                 </div>
 
                 <div class="tab-pane fade" id="card-tab3">
-                    This is the third card tab content
+
+                    <form id="VeresiyeKapatForm">
+
+                    
+                        <button type="button" class="btn btn-success VeresiyeKapatSubmit"><i class="icon-notebook mr-1"></i> VERESİYE YAZ</button>
+                        <button type="button" class="btn btn-danger FisIptalButton" id="{{ $siparis01->id }}"><i class="icon-trash mr-1"></i> FİŞ İPTAL</button>
+                        <input type="hidden" name="id" value="{{ $siparis01->id }}">
+                        <hr>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            MÜŞTERİ
+                                        </td>
+                                        <td class="col-md-8">
+                                            <select class="js-example-basic-single js-states form-control select cariid text-primary" name="cariid" id="cariid"></select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            ANLAŞMA
+                                        </td>
+                                        <td class="col-md-8">
+                                            <select class="form-control" name="anlasma">
+                                                <option value="GUNCEL">GÜNCEL FİYAT</option>  
+                                                <option value="SABIT">SABİT FİYAT</option>  
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            ÖDEME TARİHİ
+                                        </td>
+                                        <td class="col-md-8">
+                                          
+                                            <div class="input-group">
+                                            <span class="input-group-prepend">
+                                                <span class="input-group-text"><i class="icon-calendar"></i></span>
+                                            </span>
+                                            <input type="text" data-value="<?php echo date("Y-m-d",time()); ?>" name="tarih_vade" class="form-control tarih_vade">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <h3 class="">TOPLAM</h3>
+                                        </td>
+
+                                        <td>
+                                            <h3 class="text-right text-primary"><b>{{ para($genel_toplam) }} TL</b></h3>
+                                        </td>
+                                    </tr>
+    
+                                </tbody>
+                            </table>
+
+                            
+                        </div>
+
+                    </form>
+
                 </div>
 
             </div>
@@ -379,6 +490,50 @@ $(document).ready(function(){
 </script>
 <!-- 
 ____________________________________________________________________________________________
+Cari Arama
+____________________________________________________________________________________________
+-->
+<script>
+$.fn.modal.Constructor.prototype._enforceFocus = function() {};
+$(document).ready(function(){
+    $('#cariid').select2({
+        ajax : {
+            url : "{{ url('api/musteri') }}",
+            dataType : 'json',
+            delay : 200,
+            data : function(params){
+                return {
+                    q : params.term,
+                    page : params.page
+                };
+            },
+            processResults : function(data, params){
+                params.page = params.page || 2;
+                return {
+                    results : data.data,
+                    pagination: {
+                        more : (params.page  * 10) < data.total
+                    }
+                };
+            }
+        },
+        minimumInputLength : 2,
+        templateResult : function (repo){
+            if(repo.loading) return repo.cariadi;
+            var markup = repo.cariadi;
+            return markup;
+        },
+        templateSelection : function(repo)
+        {
+            return repo.cariadi;
+        },
+        escapeMarkup : function(markup){ return markup; }
+    });
+});
+
+</script>
+<!-- 
+____________________________________________________________________________________________
 Barkod Okuma
 ____________________________________________________________________________________________
 -->
@@ -536,6 +691,126 @@ e.preventDefault();
           $.ajax({
                 method    : "POST",
                 url       : "{{ url('satis/NakitKapat') }}",
+                data      : data,
+                dataType  : "JSON",
+                })
+            .done(function(response) {  
+                console.log("Dönen Sonuç: ", response.responseJSON);
+                if(response.type == 'success'){
+                Swal.fire({
+                        title: response.title,
+                        text: response.text,
+                        icon: response.type,
+                        confirmButtonText: 'Tamam'
+                    });
+                    if(response.type == 'success'){ // if true (1)
+                        setTimeout(function(){// wait for 5 secs(2)
+                                location.reload(); // then reload the page.(3)
+                        }, 2000); 
+                        }
+                }else{
+
+                    Swal.fire({
+                        title: response.title,
+                        text: response.text,
+                        icon: response.type,
+                        confirmButtonText: 'Tamam'
+                    });
+
+                }
+                }).fail(function(response){
+                Swal.fire({
+                    title: 'HATA!',
+                    text: 'Logları inceleyin',
+                    icon: 'error',
+                    confirmButtonText: 'Tamam'
+                    });
+            });
+      }
+});
+</script>
+<!-- 
+____________________________________________________________________________________________
+Kart Ödeme
+____________________________________________________________________________________________
+-->
+
+<script type="text/javascript">
+$(document).on('click', '.KartKapatSubmit', function(e){
+e.preventDefault();
+    if($("#KartKapatForm").valid())
+      {
+          var data = $("#KartKapatForm").serialize();
+
+          $.ajaxSetup({
+              headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+            });
+          $.ajax({
+                method    : "POST",
+                url       : "{{ url('satis/KartKapat') }}",
+                data      : data,
+                dataType  : "JSON",
+                })
+            .done(function(response) {  
+                console.log("Dönen Sonuç: ", response.responseJSON);
+                if(response.type == 'success'){
+                Swal.fire({
+                        title: response.title,
+                        text: response.text,
+                        icon: response.type,
+                        confirmButtonText: 'Tamam'
+                    });
+                    if(response.type == 'success'){ // if true (1)
+                        setTimeout(function(){// wait for 5 secs(2)
+                                location.reload(); // then reload the page.(3)
+                        }, 2000); 
+                        }
+                }else{
+
+                    Swal.fire({
+                        title: response.title,
+                        text: response.text,
+                        icon: response.type,
+                        confirmButtonText: 'Tamam'
+                    });
+
+                }
+                }).fail(function(response){
+                Swal.fire({
+                    title: 'HATA!',
+                    text: 'Logları inceleyin',
+                    icon: 'error',
+                    confirmButtonText: 'Tamam'
+                    });
+            });
+      }
+});
+</script>
+<!-- 
+____________________________________________________________________________________________
+Veresiye Ödeme
+____________________________________________________________________________________________
+-->
+{!! JsValidator::formRequest('App\Http\Requests\Satis\VeresiyeKapatRequest', '#VeresiyeKapatForm'); !!}
+<script type="text/javascript">
+$('#VeresiyeKapatForm .tarih_vade').pickadate();
+
+$(document).on('click', '.VeresiyeKapatSubmit', function(e){
+e.preventDefault();
+    if($("#VeresiyeKapatForm").valid())
+      {
+          var data = $("#VeresiyeKapatForm").serialize();
+
+          $.ajaxSetup({
+              headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+            });
+          $.ajax({
+                method    : "POST",
+                url       : "{{ url('satis/VeresiyeKapat') }}",
                 data      : data,
                 dataType  : "JSON",
                 })

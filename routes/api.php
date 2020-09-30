@@ -4,8 +4,8 @@ Route::group(['prefix' => '/v1', 'namespace' => 'Api\V1', 'as' => 'api.'], funct
 
 });
 
-Route::get('/cari/icpiyasa',function(){
-    return App\Models\Cari01::where('cariadi','LIKE','%'.request('q').'%')->where('grubu','MUSTERI')->paginate(10);
+Route::get('/musteri',function(){
+    return App\Models\Cari01::where('cariadi','LIKE','%'.request('q').'%')->where('grubu', 'MUSTERI')->paginate(10);
 });
 Route::get('/tedarikciler',function(){
     return App\Models\Cari01::where('cariadi','LIKE','%'.request('q').'%')->where('grubu','TEDARIKCI')->paginate(10);

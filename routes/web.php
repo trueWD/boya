@@ -114,10 +114,12 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('fatura/alis/FaturaGeriAl', ['uses' => 'Fatura\FaturaAlisController@FaturaGeriAl','as' => 'fatura.alis.FaturaGeriAl']);
    Route::post('fatura/alis/FaturaRaporu', ['uses' => 'Fatura\FaturaAlisController@FaturaRaporu','as' => 'fatura.alis.FaturaRaporu']);
    
+   //BANKA 
+   Route::get('banka', ['uses' => 'Banka\BankaController@index', 'as' => 'banka.index']);
+   Route::post('banka', ['uses' => 'Banka\BankaController@store', 'as' => 'satis.store']);
+   Route::post('banka/destroy', ['uses' => 'Banka\BankaController@destroy', 'as' => 'banka.destroy']);
    
    // Satış
-
-
    Route::get('satis', ['uses' => 'Satis\SatisController@index','as' => 'satis.index']);
    Route::get('satis/store', ['uses' => 'Satis\SatisController@store','as' => 'satis.store']);
    Route::get('satis/{id}', ['uses' => 'Satis\SatisController@show', 'as' => 'satis.show']);
@@ -128,18 +130,16 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('satis/UrunSil', ['uses' => 'Satis\SatisController@UrunSil', 'as' => 'satis.UrunSil']);
    Route::post('satis/FisIptal', ['uses' => 'Satis\SatisController@FisIptal', 'as' => 'satis.FisIptal']);
    Route::post('satis/NakitKapat', ['uses' => 'Satis\SatisController@NakitKapat', 'as' => 'satis.NakitKapat']);
-   
-   Route::get('satis/FisYazdir/{id}', ['uses' => 'Satis\SatisController@FisYazdir', 'as' => 'satis.FisYazdir']);
-  
-
    Route::post('satis/KartKapat', ['uses' => 'Satis\SatisController@KartKapat', 'as' => 'satis.KartKapat']);
    Route::post('satis/VeresiyeKapat', ['uses' => 'Satis\SatisController@VeresiyeKapat', 'as' => 'satis.VeresiyeKapat']);
+   Route::get('satis/FisYazdir/{id}', ['uses' => 'Satis\SatisController@FisYazdir', 'as' => 'satis.FisYazdir']);
+
+   // TAHSİLAT
+   Route::get('tahsilat', ['uses' => 'Tahsilat\TahsilatController@index', 'as' => 'tahsilat.index']);
+   Route::post('tahsilat/BorcListesi', ['uses' => 'Tahsilat\TahsilatController@BorcListesi', 'as' => 'tahsilat.BorcListesi']);
 
 
-   //BANKA 
-   Route::get('banka', ['uses' => 'Banka\BankaController@index', 'as' => 'banka.index']);
-   Route::post('banka', ['uses' => 'Banka\BankaController@store', 'as' => 'satis.store']);
-   Route::post('banka/destroy', ['uses' => 'Banka\BankaController@destroy', 'as' => 'banka.destroy']);
+
   
 });
 
