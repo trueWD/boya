@@ -11,8 +11,8 @@
                 </li>
                 <li class="nav-item">
                     <a href="#urun-tab2" class="nav-link" data-toggle="tab">
-                        <i class="icon-credit-card mr-2"></i>
-                        ÖDEME RAPORU
+                        <i class="icon-stats-growth mr-2"></i>
+                        CARİ TAHSİLAT RAPORU
                     </a>
                 </li>
             </ul>
@@ -104,9 +104,143 @@
         </div>
 
         <div class="tab-pane fade" id="urun-tab2">
-            This is the second card tab content
+
+            <table class="table table-striped table-bordered table-hover  table-sm">
+            <thead>
+                <tr>
+ 
+                    <th>#</th>
+                    <th>CARİ</th>
+                    <th>TARİH</th>
+                    <th>AÇIKLAMA</th>
+                    <th>ÖDEME TİPİ</th>
+                    <th>TUTAR</th>
+                    <th>YETKİLİ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php   
+                    $genelToplam = 0;    
+                @endphp
+                @foreach($tahsilat01 as $row)
+                @php
+                    $genelToplam    = $genelToplam + $row->tutar;
+                @endphp
+                <tr>
+
+                    
+                    <td>
+                        <button class="btn btn-danger btn-sm TahsilatSilButton" id='{{ $row->id }}'><i class="icon-trash mr-1"></i> Sil</button>
+                    </td>
+                    <td> 
+                        {{ $row->cari->cariadi }}
+                    </td>
+                    <td>{{ tarihSaat($row->created_at) }}</td>
+                    <td>{{ $row->aciklama }}</td>
+                    <td>
+                        @if($row->odemetipi=='NAKIT')
+                        <span class="badge badge-flat border-success text-success">{{ $row->odemetipi }}</span>
+                        @endif
+                        @if($row->odemetipi=='KART')
+                        <span class="badge badge-flat border-primary text-primary">{{ $row->odemetipi }}</span>
+                        @endif
+                    </td>
+                    <td class="text-right"><b>{{ para($row->tutar) }} TL</b></td>
+                    <td>{{ $row->user->name }}</td>
+        
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+
         </div>
 
     </div>
 </div>
 
+
+<!-- 
+___________________________________________________________________________________________________
+Ürün SİLME
+___________________________________________________________________________________________________
+-->
+<script>
+    $(document).on('click', '.TahsilatSilButton', function(){
+
+      const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false,
+    })
+
+    swalWithBootstrapButtons.fire({
+      title: 'Dikkat!',
+      text: "Tahsilat silinsin mi?",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Evet, Sil',
+      cancelButtonText: 'Hayır!',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.value) {
+
+    var id = $(this).attr("id");
+
+    $.ajaxSetup({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+      });
+
+    $.ajax({
+            method    : "POST",
+            url       : "{{ url('tahsilat/TahsilatSil') }}",
+            data      : {"id":id},
+            dataType  : "JSON",
+            })
+        .done(function(response) {
+            console.log("Dönen Sonuç: ", response.responseJSON);
+            if(response.type == 'success'){
+
+                Swal.fire({
+                    confirmButton: 'btn btn-success',
+                    title: response.title,
+                    text: response.text,
+                    type: response.type,
+                    confirmButtonText: 'Tamam'
+                });
+                 if(response.type == 'success'){ // if true (1)
+                     setTimeout(function(){// wait for 5 secs(2)
+                           location.reload(); // then reload the page.(3)
+                      }, 2000); 
+                   }
+              }else{
+
+                Swal.fire({
+                    confirmButton: 'btn btn-success',
+                    title: response.title,
+                    text: response.text,
+                    type: response.type,
+                    confirmButtonText: 'Tamam'
+                  });
+              }
+            }).fail(function(response){
+              Swal.fire({
+                  confirmButton: 'btn btn-success',
+                  cancelButton: 'btn btn-danger',
+                  title: 'HATA!',
+                  text: 'Sistemsel bir hata oluştur lütfen logları inceleyin',
+                  type: 'error',
+                  confirmButtonText: 'Tamam'
+                });
+          });
+
+      }
+    });
+    return false;
+
+    });
+</script>

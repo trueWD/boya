@@ -510,8 +510,50 @@ class SatisController extends Controller
 
     }
 
+    /*
+    _____________________________________________________________________________________________
+    Satış Raporu
+    _____________________________________________________________________________________________
+    */
+    public function SatisRaporu(Request $request)
+    {
 
 
+
+        $tarih      = date('Y-m-d', strtotime($request->enddate_submit . ' + 1 days'));
+
+        $siparis01   = Siparis01::with('user', 'cari')
+            ->when($request->cariid, function ($query) {
+                return $query->where('cari01', request('cariid'));
+            })
+            ->whereBetween('created_at', [$request->startdate_submit, $tarih])
+            ->orderBy('id', 'DESC')
+            ->get();
+
+
+
+
+        $rapor  = view(
+            'satis.rapor',
+            [
+                'siparis01' => $siparis01,
+            ]
+        )->render();
+
+
+
+
+
+        $data = [
+            'title' => 'Başarılı!',
+            'text'  => 'Rapor Çekildi',
+            'type'  => 'success',
+            'rapor'  => $rapor,
+        ];
+
+        return response()->json($data);
+
+    }
 
 
 

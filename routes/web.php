@@ -133,6 +133,7 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('satis/KartKapat', ['uses' => 'Satis\SatisController@KartKapat', 'as' => 'satis.KartKapat']);
    Route::post('satis/VeresiyeKapat', ['uses' => 'Satis\SatisController@VeresiyeKapat', 'as' => 'satis.VeresiyeKapat']);
    Route::get('satis/FisYazdir/{id}', ['uses' => 'Satis\SatisController@FisYazdir', 'as' => 'satis.FisYazdir']);
+   Route::post('satis/SatisRaporu', ['uses' => 'Satis\SatisController@SatisRaporu', 'as' => 'satis.SatisRaporu']);
 
    // TAHSİLAT
    Route::get('tahsilat', ['uses' => 'Tahsilat\TahsilatController@index', 'as' => 'tahsilat.index']);
@@ -140,6 +141,9 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('tahsilat/BorcListesi', ['uses' => 'Tahsilat\TahsilatController@BorcListesi', 'as' => 'tahsilat.BorcListesi']);
    Route::post('tahsilat/FiyatGuncelle', ['uses' => 'Tahsilat\TahsilatController@FiyatGuncelle', 'as' => 'tahsilat.FiyatGuncelle']);
    Route::post('tahsilat/BorcKapat', ['uses' => 'Tahsilat\TahsilatController@BorcKapat', 'as' => 'tahsilat.BorcKapat']);
+   Route::post('tahsilat/TahsilatSil', ['uses' => 'Tahsilat\TahsilatController@TahsilatSil', 'as' => 'tahsilat.TahsilatSil']);
+   Route::get('tahsilat/TahsilatRaporu', ['uses' => 'Tahsilat\TahsilatController@TahsilatRaporu', 'as' => 'tahsilat.TahsilatRaporu']);
+   Route::post('tahsilat/RaporSorgu', ['uses' => 'Tahsilat\TahsilatController@RaporSorgu', 'as' => 'tahsilat.RaporSorgu']);
 
 
 

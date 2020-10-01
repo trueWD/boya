@@ -24,7 +24,8 @@
 	<a href="#" class="nav-link"><i class="icon-folder-download"></i> <span>SATIŞ YÖNETİMi</span></a>
 
 	<ul class="nav nav-group-sub" data-submenu-title="İÇ PİYASA">
-		<li class="nav-item"><a href="{{ url('tahsilat') }}" class="nav-link {{ request()->is('stahsilat','tahsilat/*') ? 'active' : '' }}">Tahsilat İşlemleri</a></li>
+		<li class="nav-item"><a href="{{ url('tahsilat') }}" class="nav-link {{ request()->is('tahsilat') ? 'active' : '' }}">Tahsilat İşlemleri</a></li>
+		<li class="nav-item"><a href="{{ url('tahsilat/TahsilatRaporu') }}" class="nav-link {{ request()->is('tahsilat/TahsilatRaporu') ? 'active' : '' }}">Tahsilat Raporu</a></li>
 	</ul>		
 </li>
 

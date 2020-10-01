@@ -16,13 +16,13 @@
                 <li class="nav-item">
                     <a href="#urun-tab1" class="nav-link active" data-toggle="tab">
                         <i class="icon-cash3 mr-2"></i>
-                        GÜNLÜK SATIŞ
+                        GÜNLÜK TAHSİLAT
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="#urun-tab2" class="nav-link" data-toggle="tab">
                         <i class="icon-stats-growth mr-2"></i>
-                        SATIŞ RAPORU
+                        TAHSİLAT RAPORU
                     </a>
                 </li>
             </ul>
@@ -32,80 +32,63 @@
     <div class="card-body tab-content">
         <div class="tab-pane fade show active" id="urun-tab1">
 
-        <a href="{{ url('satis/store') }}" type="button" class="btn btn-primary"><i class="icon-basket  mr-1php artisan ma"></i> Yeni Satış</a>
+       
 
-            <table class="table table-striped table-bordered table-hover table-sm myDataTable1">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Fiş No</th>
-                        <th>Durumu</th>
-                        <th>Müşteri</th>
-                        <th>İskonto Tutarı</th>
-                        <th>KDV Tutarı</th>
-                        <th>Toplam Tutar</th>
-                        <th>Ödeme Şekli</th>
-                        <th>Tarih</th>
-                        <th>Satış yapan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($siparisler as $row)
-                    <tr>
-                        <td>
-                            
-                            <div class="btn-group btn-group-sm">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                    <i class="icon-menu7"></i>
-                                </button>
+           <table class="table table-striped table-bordered table-hover  table-sm">
+            <thead>
+                <tr>
+ 
+                    <th>#</th>
+                    <th>CARİ</th>
+                    <th>TARİH</th>
+                    <th>AÇIKLAMA</th>
+                    <th>ÖDEME TİPİ</th>
+                    <th>TUTAR</th>
+                    <th>YETKİLİ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php   
+                    $genelToplam = 0;    
+                @endphp
+                @foreach($tahsilat01 as $row)
+                @php
+                    $genelToplam    = $genelToplam + $row->tutar;
+                @endphp
+                <tr>
 
-                                <div class="dropdown-menu">
-                                    <a href="{{ url('satis/'.$row->id) }}" class="dropdown-item"><i class="icon-file-eye"></i> Göster</a>
-                                    
-                                    @if($row->durumu=='TAMAM')
-                                    <a href="{{ url('satis/FisYazdir/'.$row->id) }}" target="_blank" class="dropdown-item"><i class="icon-printer"></i> Yazdır</a>
-                                    @endif
-                                    @if($row->durumu=='AKTIF')
-                                    <div class="dropdown-divider"></div>
-                                    <button type="button" class="dropdown-item text-danger FisIptalButton" id="{{ $row->id }}"><i class="icon-trash"></i> Sil</button>
-                                    @endif
-                                    
-                                  
-                                </div>
-                            </div>
-                        </td>
-                        <td><a href="{{ url('satis/'.$row->id) }}">{{ $row->id }}</a></td>
-                        <td>
-                            <a href="{{ url('satis/'.$row->id) }}">
-                            @if( $row->durumu == "AKTIF") 
-                                <span class="badge badge-primary">{{ $row->durumu }}</span>
-                            @elseif($row->durumu == "IPTAL")
-                                <span class="badge badge-warning">{{ $row->durumu }}</span>
-                            @else
-                                <span class="badge badge-success">{{ $row->durumu }}</span>
-                            @endif
-                            </a>
-                        </td>
-                        
-                        <td> @if(isset($row->cari)) {{ $row->cari->cariadi }}  @else PERKENDE SATIŞ @endif</td>
-                        <td class="text-right">{{ para($row->toplam_iskonto) }} TL</td>
-                        <td class="text-right">{{ para($row->toplam_kdv) }} TL</td>
-                        <td class="text-right">{{ para($row->toplam_tutar) }} TL</td>
-                        <td>{{ $row->odemetipi }}</td>
-                        <td>{{ tarihSaat($row->created_at) }}</td>
-                        <td>{{ $row->user->name }}</td>
-               
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    
+                    <td>
+                        <button class="btn btn-danger btn-sm TahsilatSilButton" id='{{ $row->id }}'><i class="icon-trash mr-1"></i> Sil</button>
+                    </td>
+                    <td> 
+                        {{ $row->cari->cariadi }}
+                    </td>
+                    <td>{{ tarihSaat($row->created_at) }}</td>
+                    <td>{{ $row->aciklama }}</td>
+                    <td>
+                        @if($row->odemetipi=='NAKIT')
+                        <span class="badge badge-flat border-success text-success">{{ $row->odemetipi }}</span>
+                        @endif
+                        @if($row->odemetipi=='KART')
+                        <span class="badge badge-flat border-primary text-primary">{{ $row->odemetipi }}</span>
+                        @endif
+                    </td>
+                    <td class="text-right"><b>{{ para($row->tutar) }} TL</b></td>
+                    <td>{{ $row->user->name }}</td>
+        
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
 
 
 
         </div>
 
         <div class="tab-pane fade" id="urun-tab2">
-            <form id="SatisRaporuForm">
+            <form id="TahsilatRaporuForm">
 
                 <div class="row">
 
@@ -145,12 +128,12 @@
 
 
                 <div class="text-right">
-                    <button type="button" class="btn btn-primary SatisRaporuSubmit">Rapor Oluştur <i class="icon-filter4 ml-2"></i></button>
+                    <button type="button" class="btn btn-primary TahsilatRaporuSubmit">Rapor Oluştur <i class="icon-filter4 ml-2"></i></button>
                 </div>
             </form>
 
 
-            <div id="SatisRaporuResponse"></div>
+            <div id="TahsilatRaporuResponse"></div>
 
 
         </div>
@@ -158,63 +141,16 @@
     </div>
 </div>
 
-
-
 <!-- 
 ___________________________________________________________________________________________________
-Fiş İptal
-___________________________________________________________________________________________________
--->
-<script type="text/javascript">
-
-    $(document).on('click', '.FisIptalButton', function (e) {
-    e.preventDefault();
-
-    var id = $(this).attr("id");
-
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-        });
-
-    $.ajax({
-        method    : "POST",
-        url       : "{{ url('satis/FisIptal') }}",
-        data      : {"id":id},
-        dataType  : "JSON",
-    })
-    .done(function(response) {
-
-        
-        new PNotify({
-            title: response.title,
-            text: response.text,
-            addclass: 'alert bg-primary border-success alert-styled-left'
-        });
-
-        setTimeout(function(){
-            window.location.replace("{{ url('satis') }}"); 
-        }, 1000); 
-    })
-  .fail(function(response) {
-
-    console.log("Hata: ", response);
-
-    });           
-});
-
-</script>
-<!-- 
-___________________________________________________________________________________________________
-SATIŞ RAPORU
+TAHSİLAT RAPORU
 ___________________________________________________________________________________________________
 -->
 <script>
 $.fn.modal.Constructor.prototype._enforceFocus = function() {};
 $(document).ready(function(){
 
-    $('#SatisRaporuForm #cariid').select2({
+    $('#TahsilatRaporuForm #cariid').select2({
         ajax : {
             url : '/api/musteri',
             dataType : 'json',
@@ -254,14 +190,14 @@ $(document).ready(function(){
 
 
 <script>
-  $('#SatisRaporuForm .startdate').pickadate();
-  $('#SatisRaporuForm .enddate').pickadate();
+  $('#TahsilatRaporuForm .startdate').pickadate();
+  $('#TahsilatRaporuForm .enddate').pickadate();
 </script>
 
 <script type="text/javascript">
-$( ".SatisRaporuSubmit" ).click(function() {
+$( ".TahsilatRaporuSubmit" ).click(function() {
 
-  var data = $("#SatisRaporuForm").serialize();
+  var data = $("#TahsilatRaporuForm").serialize();
 
   $.ajaxSetup({
       headers: {
@@ -270,15 +206,15 @@ $( ".SatisRaporuSubmit" ).click(function() {
       });
   $.ajax({
           method    : "POST",
-          url       : "{{ url('satis/SatisRaporu') }}",
+          url       : "{{ url('tahsilat/RaporSorgu') }}",
           data      : data,
           dataType  : "JSON",
       })
   .done(function(response) {
       
-      $("#SatisRaporuResponse").html(response.rapor);
+      $("#TahsilatRaporuResponse").html(response.rapor);
 
-      $('.SatisRaporuTable').DataTable({
+      $('.TahsilatRaporuTable').DataTable({
           "lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
             "order": [[ 0, "desc" ]],
           buttons: {
@@ -333,5 +269,91 @@ $( ".SatisRaporuSubmit" ).click(function() {
 });
 
 </script>
+
+<!-- 
+___________________________________________________________________________________________________
+Ürün SİLME
+___________________________________________________________________________________________________
+-->
+<script>
+    $(document).on('click', '.TahsilatSilButton', function(e){
+    e.preventDefault();
+      const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false,
+    })
+
+    swalWithBootstrapButtons.fire({
+      title: 'Dikkat!',
+      text: "Tahsilat silinsin mi?",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Evet, Sil',
+      cancelButtonText: 'Hayır!',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.value) {
+
+    var id = $(this).attr("id");
+
+    $.ajaxSetup({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+      });
+
+    $.ajax({
+            method    : "POST",
+            url       : "{{ url('tahsilat/TahsilatSil') }}",
+            data      : {"id":id},
+            dataType  : "JSON",
+            })
+        .done(function(response) {
+            console.log("Dönen Sonuç: ", response.responseJSON);
+            if(response.type == 'success'){
+
+                Swal.fire({
+                    confirmButton: 'btn btn-success',
+                    title: response.title,
+                    text: response.text,
+                    type: response.type,
+                    confirmButtonText: 'Tamam'
+                });
+                 if(response.type == 'success'){ // if true (1)
+                     setTimeout(function(){// wait for 5 secs(2)
+                           location.reload(); // then reload the page.(3)
+                      }, 2000); 
+                   }
+              }else{
+
+                Swal.fire({
+                    confirmButton: 'btn btn-success',
+                    title: response.title,
+                    text: response.text,
+                    type: response.type,
+                    confirmButtonText: 'Tamam'
+                  });
+              }
+            }).fail(function(response){
+              Swal.fire({
+                  confirmButton: 'btn btn-success',
+                  cancelButton: 'btn btn-danger',
+                  title: 'HATA!',
+                  text: 'Sistemsel bir hata oluştur lütfen logları inceleyin',
+                  type: 'error',
+                  confirmButtonText: 'Tamam'
+                });
+          });
+
+      }
+    });
+    return false;
+
+    });
+</script>
+
 
 @endsection
