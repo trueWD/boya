@@ -136,7 +136,10 @@ Route::group(['middleware' => ['auth']], function () {
 
    // TAHSİLAT
    Route::get('tahsilat', ['uses' => 'Tahsilat\TahsilatController@index', 'as' => 'tahsilat.index']);
+   Route::post('tahsilat', ['uses' => 'Tahsilat\TahsilatController@store', 'as' => 'tahsilat.store']);
    Route::post('tahsilat/BorcListesi', ['uses' => 'Tahsilat\TahsilatController@BorcListesi', 'as' => 'tahsilat.BorcListesi']);
+   Route::post('tahsilat/FiyatGuncelle', ['uses' => 'Tahsilat\TahsilatController@FiyatGuncelle', 'as' => 'tahsilat.FiyatGuncelle']);
+   Route::post('tahsilat/BorcKapat', ['uses' => 'Tahsilat\TahsilatController@BorcKapat', 'as' => 'tahsilat.BorcKapat']);
 
 
 

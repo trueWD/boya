@@ -7,24 +7,32 @@
 @endsection
 @section('content')
 
-<!-- BEGIN FORM -->
-<div id="CariEditResponse"></div>
+
 
 <div class="card">
+    <div class="card-header bg-transparent border-bottom pb-0 pt-sm-0 header-elements-sm-inline">
+        <div class="header-elements">
+            <ul class="nav nav-tabs nav-tabs-highlight card-header-tabs">
+                <li class="nav-item">
+                    <a href="#urun-tab1" class="nav-link active" data-toggle="tab">
+                        <i class="icon-cash3 mr-2"></i>
+                        GÜNLÜK SATIŞ
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#urun-tab2" class="nav-link" data-toggle="tab">
+                        <i class="icon-stats-growth mr-2"></i>
+                        SATIŞ RAPORU
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="card-body tab-content">
+        <div class="tab-pane fade show active" id="urun-tab1">
 
-<div class="card-body">
-    <ul class="nav nav-tabs nav-tabs-highlight">
-        <li class="nav-item"><a href="#left-icon-tab1" class="nav-link active" data-toggle="tab"><i class="icon-basket mr-2"></i> GÜNLÜK SATIŞ</a></li>
-        <li class="nav-item"><a href="#left-icon-tab2" class="nav-link" data-toggle="tab"><i class="icon-stats-bars2 mr-2"></i> SATIŞ RAPORLARI</a></li>
-    </ul>
-
-    <div class="tab-content">
-        <div class="tab-pane fade show active" id="left-icon-tab1">
-            
-
-
-
-            <a href="{{ url('satis/store') }}" type="button" class="btn btn-primary"><i class="icon-basket  mr-1php artisan ma"></i> Yeni Satış Ekle</a>
+        <a href="{{ url('satis/store') }}" type="button" class="btn btn-primary"><i class="icon-basket  mr-1php artisan ma"></i> Yeni Satış</a>
 
             <table class="table table-striped table-bordered table-hover table-sm myDataTable1">
                 <thead>
@@ -45,6 +53,7 @@
                     @foreach($siparisler as $row)
                     <tr>
                         <td>
+                            
                             <div class="btn-group btn-group-sm">
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                                     <i class="icon-menu7"></i>
@@ -52,9 +61,16 @@
 
                                 <div class="dropdown-menu">
                                     <a href="{{ url('satis/'.$row->id) }}" class="dropdown-item"><i class="icon-file-eye"></i> Göster</a>
-                                    <button type="button" class="dropdown-item SiparisEdit" id="{{ $row->id }}"><i class="icon-equalizer3"></i> Düzenle</button>
+                                    
+                                    @if($row->durumu=='TAMAM')
+                                    <a href="{{ url('satis/FisYazdir/'.$row->id) }}" target="_blank" class="dropdown-item"><i class="icon-printer"></i> Yazdır</a>
+                                    @endif
+                                    @if($row->durumu=='AKTIF')
                                     <div class="dropdown-divider"></div>
-                                    <button type="button" class="dropdown-item text-danger rowDelete" id="{{ $row->id }}"><i class="icon-trash"></i> Sil</button>
+                                    <button type="button" class="dropdown-item text-danger FisIptalButton" id="{{ $row->id }}"><i class="icon-trash"></i> Sil</button>
+                                    @endif
+                                    
+                                  
                                 </div>
                             </div>
                         </td>
@@ -71,7 +87,7 @@
                             </a>
                         </td>
                         
-                        <td> @if(isset($row->cari->cariadi)) {{ $row->cari->cariadi }}  @else PERKENDE SATIŞ @endif</td>
+                        <td> @if(isset($row->cari)) {{ $row->cari->cariadi }}  @else PERKENDE SATIŞ @endif</td>
                         <td class="text-right">{{ para($row->toplam_iskonto) }} TL</td>
                         <td class="text-right">{{ para($row->toplam_kdv) }} TL</td>
                         <td class="text-right">{{ para($row->toplam_tutar) }} TL</td>
@@ -86,141 +102,61 @@
 
 
 
-
-
         </div>
 
-        <div class="tab-pane fade" id="left-icon-tab2">
-            Tab 2
+        <div class="tab-pane fade" id="urun-tab2">
+            This is the second card tab content
         </div>
 
     </div>
 </div>
-</div>
 
 
 
-
-
-
-
-
-
-
+<!-- 
+___________________________________________________________________________________________________
+Fiş İptal
+___________________________________________________________________________________________________
+-->
 <script type="text/javascript">
-    $(document).on('click', '.CariEdit', function (e) {
-        e.preventDefault();
-        //var id = $(this).data('id');
 
-            var id = $(this).attr("id");
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-                });
-
-            $.ajax({
-                    method    : "POST",
-                    url       : "{{ url('cari/edit') }}",
-                    data      : {"id":id},
-                    dataType  : "JSON",
-                })
-            .done(function(response) {
-                
-                $("#CariEditResponse").html(response.cariedit);
-                $('#CariEditModal').modal('show');
-
-                })
-            .fail(function(response) {
-
-                console.log("Hata: ", response);
-
-                });
-            //return false;
-
-    });
-</script>
-
-<script type="text/javascript">
-$(document).on('click', '.CariDelete', function(e){
-e.preventDefault();
-
-  const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-danger',
-      },
-      buttonsStyling: false,
-    })
-
-    swalWithBootstrapButtons.fire({
-      title: 'Dikkat!',
-      text: "Bu kaydı silmek istediğinizden eminmisiniz?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Evet Sil!',
-      cancelButtonText: 'Hayır!',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.value) {
+    $(document).on('click', '.FisIptalButton', function (e) {
+    e.preventDefault();
 
     var id = $(this).attr("id");
 
-    console.log(id);
-
     $.ajaxSetup({
         headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-      });
+        });
 
     $.ajax({
-            method    : "POST",
-            url       : "{{ url('cari/destroy') }}",
-            data      : {"id":id},
-            dataType  : "JSON",
-            })
-        .done(function(response) {
-            console.log("Dönen Sonuç: ", response.responseJSON);
-            if(response.type == 'success'){
+        method    : "POST",
+        url       : "{{ url('satis/FisIptal') }}",
+        data      : {"id":id},
+        dataType  : "JSON",
+    })
+    .done(function(response) {
 
-              Swal.fire({
-                  confirmButton: 'btn btn-success',
-                    title: response.title,
-                    text: response.text,
-                    icon: response.type,
-                    confirmButtonText: 'Tamam'
-                  });
-                 if(response.type == 'success'){ // if true (1)
-                      setTimeout(function(){// wait for 5 secs(2)
-                           location.reload(); // then reload the page.(3)
-                      }, 2000);
-                   }
-              }else{
-                Swal.fire({
-                    confirmButton: 'btn btn-success',
-                    title: response.title,
-                    text: response.text,
-                    icon: response.type,
-                    confirmButtonText: 'Tamam'
-                  });
-              }
-            }).fail(function(response){
-              Swal.fire({
-                    
-                  title: 'HATA!',
-                  text: 'Sistemsel bir hata oluştur lütfen logları inceleyin',
-                  icon: 'error',
-                  confirmButtonText: 'Tamam',
-                  confirmButton: 'btn btn-success',
-                });
-          });
+        
+        new PNotify({
+            title: response.title,
+            text: response.text,
+            addclass: 'alert bg-primary border-success alert-styled-left'
+        });
 
-      }
-    });
+        setTimeout(function(){
+            window.location.replace("{{ url('satis') }}"); 
+        }, 1000); 
+    })
+  .fail(function(response) {
+
+    console.log("Hata: ", response);
+
+    });           
 });
-</script>
 
+</script>
 
 @endsection

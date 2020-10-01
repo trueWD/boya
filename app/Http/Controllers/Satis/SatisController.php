@@ -40,7 +40,7 @@ class SatisController extends Controller
     {
 
         $data = new Siparis01;
-        $data->userid = '1';
+        $data->userid = auth()->id();
         $data->durumu = 'AKTIF';
         $data->save();
         

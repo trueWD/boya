@@ -121,7 +121,13 @@ $("#BorcListesiForm .cariid" ).change(function() {
         
         $("#BorcListesiResponse").html(response.BorcListesi);
 
-        })
+        new PNotify({
+            title: response.title,
+            text: response.text,
+            addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
+        });
+
+     })
     .fail(function(response) {
 
         console.log("Hata: ", response);
@@ -129,22 +135,13 @@ $("#BorcListesiForm .cariid" ).change(function() {
     });
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!-- 
+____________________________________________________________________________________________
+Borç Kapat
+____________________________________________________________________________________________
+-->
 <script type="text/javascript">
-    $(document).on('click', '.CariEdit', function (e) {
+    $(document).on('click', '.BorcKapatButton', function (e) {
         e.preventDefault();
         //var id = $(this).data('id');
 
@@ -158,25 +155,87 @@ $("#BorcListesiForm .cariid" ).change(function() {
 
             $.ajax({
                     method    : "POST",
-                    url       : "{{ url('cari/edit') }}",
+                    url       : "{{ url('tahsilat/BorcKapat') }}",
                     data      : {"id":id},
                     dataType  : "JSON",
                 })
             .done(function(response) {
                 
-                $("#CariEditResponse").html(response.cariedit);
-                $('#CariEditModal').modal('show');
+                $("#BorcListesiResponse").html(response.BorcListesi);
+                new PNotify({
+                    title: response.title,
+                    text: response.text,
+                    addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
+                });
 
-                })
+            })
             .fail(function(response) {
 
                 console.log("Hata: ", response);
 
-                });
+            });
             //return false;
 
     });
 </script>
+<!-- 
+____________________________________________________________________________________________
+Fiyat Güncelle
+____________________________________________________________________________________________
+-->
+<script type="text/javascript">
+    $(document).on('click', '.FiyatGuncelleButton', function (e) {
+        e.preventDefault();
+        //var id = $(this).data('id');
+
+            var id = $(this).attr("id");
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+                });
+
+            $.ajax({
+                    method    : "POST",
+                    url       : "{{ url('tahsilat/FiyatGuncelle') }}",
+                    data      : {"id":id},
+                    dataType  : "JSON",
+                })
+            .done(function(response) {
+                
+                $("#BorcListesiResponse").html(response.BorcListesi);
+                new PNotify({
+                    title: response.title,
+                    text: response.text,
+                    addclass: 'alert bg-'+response.type+' border-'+response.type+' alert-styled-left'
+                });
+
+            })
+            .fail(function(response) {
+
+                console.log("Hata: ", response);
+
+            });
+            //return false;
+
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <script type="text/javascript">
 $(document).on('click', '.CariDelete', function(e){

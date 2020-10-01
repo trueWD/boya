@@ -18,7 +18,7 @@ class Siparis01 extends Model
 
 	public function cari()
 	{
-		return $this->hasOne('App\Models\Cari01', 'id', 'cariid');
+		return $this->hasOne('App\Models\Cari01', 'id', 'cari01');
     }
 	public function user()
 	{

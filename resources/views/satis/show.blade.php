@@ -327,6 +327,7 @@
 
         @if($siparis01->durumu=='TAMAM')
         <a href="{{ url('satis/FisYazdir/'.$siparis01->id) }}" target="_blank" class="btn bg-purple-400"><i class="icon-printer mr-1"></i> YAZDIR</a>
+        <a href="{{ url('satis/store') }}" type="button" class="btn btn-primary"><i class="icon-basket  mr-1php artisan ma"></i> Yeni Satış</a>
         @endif
 
         <table class="table table-striped table-bordered table-hover myDataTable1">

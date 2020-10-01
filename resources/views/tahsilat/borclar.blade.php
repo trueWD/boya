@@ -1,3 +1,4 @@
+@include('tahsilat.create')
 <div class="card">
     <div class="card-header bg-transparent border-bottom pb-0 pt-sm-0 header-elements-sm-inline">
         <div class="header-elements">
@@ -21,9 +22,11 @@
     <div class="card-body tab-content">
         <div class="tab-pane fade show active" id="urun-tab1">
 
-    
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#YeniTahsilatModal"><i class="icon-plus3"></i> Tahsilat Ekle</button>
+        <button type="button" class="btn btn-primary FiyatGuncelleButton" id="{{ $cari01->id }}"><i class="icon-loop"></i> Güncel Fiyatları Uygula</button>
+        <hr>
 
-        <table class="table table-striped table-bordered table-hover myDataTable1">
+        <table class="table table-striped table-bordered table-hover  table-sm">
             <thead>
                 <tr>
  
@@ -48,7 +51,7 @@
 
                     
                     <td>
-                        <button class="btn btn-success btn-sm BorcKapatButton"><i class="icon-printer mr-1"></i> ÖDE</button>
+                        <button class="btn btn-success btn-sm BorcKapatButton" id='{{ $row->id }}'><i class="icon-printer mr-1"></i> ÖDE</button>
                     </td>
                     <td> 
                         <a href="{{ url('satis/'.$row->id) }}" target="_blank" class="dropdown-item">
@@ -88,7 +91,7 @@
                 </tr>
                 <tr>
                   <td class="text-right">KALAN BORÇ</td>
-                  <td class="table-warning text-right"><b>{{ para($genelToplam - $cari01->bakiye) }} TL</b></td>
+                  <td class="table-warning text-right"><b>@if(para($genelToplam - $cari01->bakiye) > 0){{ para($genelToplam - $cari01->bakiye) }}@else 0 @endif TL</b></td>
                 </tr>
               </tbody>
             </table>
