@@ -150,7 +150,11 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('odeme', ['uses' => 'Odeme\OdemeController@store', 'as' => 'odeme.store']);
    Route::post('odeme/OdemeSil', ['uses' => 'Odeme\OdemeController@OdemeSil', 'as' => 'odeme.OdemeSil']);
    Route::post('odeme/OdemeRaporu', ['uses' => 'Odeme\OdemeController@OdemeRaporu', 'as' => 'odeme.OdemeRaporu']);
-
+   
+   // CEK SENET
+   Route::get('cek', ['uses' => 'Odeme\CekController@index', 'as' => 'cek.index']);
+   Route::post('cek', ['uses' => 'Odeme\CekController@store', 'as' => 'cek.store']);
+   Route::post('cek/CekRaporu', ['uses' => 'Odeme\CekController@CekRaporu', 'as' => 'cek.CekRaporu']);
 
 
   

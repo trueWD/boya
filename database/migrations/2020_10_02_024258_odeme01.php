@@ -16,6 +16,8 @@ class Odeme01 extends Migration
             $table->string('dekontno')->nullable();
             $table->string('banka')->nullable();
             $table->string('aciklama')->nullable();
+            $table->string('tarih_vade')->nullable();
+            $table->string('tarih_odeme')->nullable();
             $table->string('userid')->nullable();
             $table->softDeletes();
             $table->timestamps();

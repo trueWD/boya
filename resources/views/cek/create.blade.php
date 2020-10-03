@@ -1,10 +1,10 @@
-  <form role="form" id="YeniOdemeForm">
+  <form role="form" id="YeniCekForm">
     <!-- Basic modal -->
-    <div id="YeniOdemeModal" class="modal fade" tabindex="-1">
+    <div id="YeniCekModal" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">BORÇ ÖDEME EKRANI</h5>
+                    <h5 class="modal-title">ÇEK - SENET BORÇ ÖDEME EKRANI</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -21,13 +21,19 @@
                       <label for="odemetipi" class="col-sm-4 col-form-label">Ödeme Tipi</label>
                       <div class="col-sm-8">
                         <select name="odemetipi" class="form-control">
-                          <option value="NAKIT">NAKİT</option>
-                          <option value="KART">KART</option>
+                          <option value="CEK">ÇEK</option>
+                          <option value="SENET">SENET</option>
                         </select>
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label for="dekontno" class="col-sm-4 col-form-label">Dekont No</label>
+                      <label for="dekontno" class="col-sm-4 col-form-label">Vade Tarihi</label>
+                      <div class="col-sm-8">
+                          <input type="text" data-value="<?php echo date("Y-m-d",time()); ?>" name="tarih_vade" class="form-control tarih_vade">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="dekontno" class="col-sm-4 col-form-label">Evrak No</label>
                       <div class="col-sm-8">
                           <input type="text" class="form-control" id="dekontno" name="dekontno" placeholder="Dekont No" autocomplete="off">
                       </div>
@@ -53,7 +59,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn bg-primary YeniOdemeSubmit">Kaydet</button>
+                    <button type="button" class="btn bg-primary YeniCekSubmit">Kaydet</button>
                 </div>
             </div>
         </div>
@@ -61,23 +67,26 @@
     <!-- /basic modal -->
 </form>
 
-{!! JsValidator::formRequest('App\Http\Requests\Odeme\YeniOdemeRequest', '#YeniOdemeForm'); !!}
+{!! JsValidator::formRequest('App\Http\Requests\Odeme\YeniCekRequest', '#YeniCekForm'); !!}
 
 <script type="text/javascript">
-  new AutoNumeric('#YeniOdemeForm #tutar', {
+  new AutoNumeric('#YeniCekForm #tutar', {
       decimalCharacter : ',',
       digitGroupSeparator : '.',
       modifyValueOnWheel	: false,
   });
 </script>
 
+<script type="text/javascript">
+  $('#YeniCekForm .tarih_vade').pickadate();
+</script>
 
 <script type="text/javascript">
-$(document).on('click', '.YeniOdemeSubmit', function(e){
+$(document).on('click', '.YeniCekSubmit', function(e){
 e.preventDefault();
-    if($("#YeniOdemeForm").valid())
+    if($("#YeniCekForm").valid())
       {
-          var data = $("#YeniOdemeForm").serialize();
+          var data = $("#YeniCekForm").serialize();
 
           $.ajaxSetup({
               headers: {
@@ -86,7 +95,7 @@ e.preventDefault();
             });
           $.ajax({
                   method    : "POST",
-                  url       : "{{ url('odeme') }}",
+                  url       : "{{ url('cek') }}",
                   data      : data,
                   dataType  : "JSON",
                   })
@@ -131,7 +140,7 @@ e.preventDefault();
   $.fn.modal.Constructor.prototype._enforceFocus = function() {};
   $(document).ready(function(){
 
-      $('#YeniOdemeForm .cariid').select2({
+      $('#YeniCekForm .cariid').select2({
           ajax : {
               url : '/api/tedarikciler',
               dataType : 'json',

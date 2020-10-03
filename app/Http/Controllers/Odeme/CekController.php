@@ -5,15 +5,13 @@ namespace App\Http\Controllers\Odeme;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\Gate;
 use App\Models\Cari01;
 use App\Models\Odeme01;
-use App\Models\Banka01;
-use App\User;
-use App\Models\Params;
-use App\Http\Requests\Odeme\YeniOdemeRequest;
 
-class OdemeController extends Controller
+use App\Http\Requests\Odeme\YeniCekRequest;
+
+
+class CekController extends Controller
 {
     /*
     _____________________________________________________________________________________________
@@ -25,20 +23,21 @@ class OdemeController extends Controller
 
         $odeme01     = Odeme01::with('user', 'cari')
             ->where(function ($query) {
-                $query->where('odemetipi', '=', 'NAKIT')
-                    ->orWhere('odemetipi', '=', 'KART');
+                $query->where('odemetipi', '=', 'CEK')
+                    ->orWhere('odemetipi', '=', 'SENET');
             })
-            ->whereDate('created_at', '=', date('Y-m-d'))->orderBy('id', 'DESC')->get();
+            ->whereNull('tarih_odeme')
+            ->orderBy('tarih_vade', 'ASC')->get();
 
 
-        return view('odeme.index', compact('odeme01'));
+        return view('cek.index', compact('odeme01'));
     }
     /*
     _____________________________________________________________________________________________
     Store
     _____________________________________________________________________________________________
     */
-    public function store(YeniOdemeRequest $request)
+    public function store(YeniCekRequest $request)
     {
 
         $cari01     = Cari01::findOrFail($request->cariid);
@@ -53,6 +52,7 @@ class OdemeController extends Controller
         $data->dekontno     = $request->dekontno;
         $data->banka        = $request->banka;
         $data->aciklama     = $request->aciklama;
+        $data->tarih_vade   = $request->tarih_vade_submit;
         $data->userid       = auth()->id();
         $data->save();
 
@@ -60,62 +60,40 @@ class OdemeController extends Controller
         $cari01->save();
 
         $data = [
-                'title' => 'Başarılı!',
-                'text'  => 'Ödeme kayıt edildi.',
-                'type'  => 'success',
-            ];
-
-        return response()->json($data);
-    }
-    /*
-    _____________________________________________________________________________________________
-    Odeme Sil
-    _____________________________________________________________________________________________
-    */
-    public function OdemeSil(Request $request)
-    {
-
-        //dd($request->id);
-        $odeme01        = Odeme01::findOrFail($request->id);
-        $cari01         = Cari01::findOrFail($odeme01->cari01);
-        $cari01->bakiye = paraEn($cari01->bakiye + $odeme01->tutar);
-        $cari01->save();
-        $odeme01->delete();
-
-
-        $data = [
-            'title' => 'BAŞARILI',
-            'text' => 'Ödeme Silindi...',
-            'type' => 'success',
+            'title' => 'Başarılı!',
+            'text'  => 'Çek - Senet kayıt edildi',
+            'type'  => 'success',
         ];
+
         return response()->json($data);
     }
     /*
     _____________________________________________________________________________________________
-    Odeme Raporu Sorgula
+    Çek Raporu Sorgula
     _____________________________________________________________________________________________
     */
-    public function OdemeRaporu(request $request)
+    public function CekRaporu(request $request)
     {
 
-        $tarih      = date('Y-m-d',
+        $tarih      = date(
+            'Y-m-d',
             strtotime($request->enddate_submit . ' + 1 days')
         );
 
         $odeme01   = Odeme01::with('user', 'cari')
-        ->when($request->cariid, function ($query) {
-            return $query->where('cari01', request('cariid'));
-        })
-        ->where(function ($query) {
-            $query->where('odemetipi', '=', 'NAKIT')
-                ->orWhere('odemetipi', '=', 'KART');
-        })
-        ->whereBetween('created_at', [$request->startdate_submit, $tarih])
-            ->orderBy('id', 'DESC')
+            ->when($request->cariid, function ($query) {
+                return $query->where('cari01', request('cariid'));
+            })
+            ->where(function ($query) {
+                $query->where('odemetipi', '=', 'CEK')
+                    ->orWhere('odemetipi', '=', 'SENET');
+            })
+            ->whereBetween('created_at', [$request->startdate_submit, $tarih])
+            ->orderBy('tarih_vade', 'ASC')
             ->get();
 
         $rapor  = view(
-            'odeme.rapor',
+            'cek.rapor',
             [
                 'odeme01' => $odeme01,
             ]
@@ -130,6 +108,13 @@ class OdemeController extends Controller
 
         return response()->json($data);
     }
+
+
+
+
+
+
+
 
 
 }

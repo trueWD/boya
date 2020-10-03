@@ -31,12 +31,13 @@
 
 
 <!-- TEDARİK -->
-<li class="nav-item nav-item-submenu {{ request()->is('fatura/alis','fatura/alis/*','odeme','odeme/*') ? 'nav-item-expanded nav-item-open' : '' }}">
+<li class="nav-item nav-item-submenu {{ request()->is('fatura/alis','fatura/alis/*','odeme','odeme/*','cek','cek/*') ? 'nav-item-expanded nav-item-open' : '' }}">
 	<a href="#" class="nav-link"><i class="icon-git-compare"></i> <span>ALIŞ YÖNETİMİ</span></a>
 
 	<ul class="nav nav-group-sub" data-submenu-title="TEDARİK YÖNETİMİ">
 		<li class="nav-item"><a href="{{ url('fatura/alis') }}" class="nav-link {{ request()->is('fatura/alis') ? 'active' : '' }}">Alış Faturası</a></li>
-		<li class="nav-item"><a href="{{ url('odeme') }}" class="nav-link {{ request()->is('odeme') ? 'active' : '' }}">Ödeme İşleleri</a></li>
+		<li class="nav-item"><a href="{{ url('odeme') }}" class="nav-link {{ request()->is('odeme') ? 'active' : '' }}">Nakit - Kart Ödeme</a></li>
+		<li class="nav-item"><a href="{{ url('cek') }}" class="nav-link {{ request()->is('cek') ? 'active' : '' }}">Çek - Senet Ödeme</a></li>
 	</ul>		
 </li>
 
