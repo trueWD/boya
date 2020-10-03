@@ -2,12 +2,12 @@
 @section('breadcrumb')
 	<div class="breadcrumb">
        <a href="{{ url('home') }}" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> ANA SAYFA</a>
-        <span class="breadcrumb-item active"><i class="icon-basket mr-2"></i> SATIŞ</span>
+        <span class="breadcrumb-item active"><i class="icon-basket mr-2"></i> ÖDEMELER</span>
     </div>
 @endsection
 @section('content')
 
-
+@include('odeme.create')
 
 <div class="card">
     <div class="card-header bg-transparent border-bottom pb-0 pt-sm-0 header-elements-sm-inline">
@@ -16,13 +16,13 @@
                 <li class="nav-item">
                     <a href="#urun-tab1" class="nav-link active" data-toggle="tab">
                         <i class="icon-cash3 mr-2"></i>
-                        GÜNLÜK TAHSİLAT
+                        GÜNLÜK ÖDEME
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="#urun-tab2" class="nav-link" data-toggle="tab">
                         <i class="icon-stats-growth mr-2"></i>
-                        TAHSİLAT RAPORU
+                        ÖDEME RAPORU
                     </a>
                 </li>
             </ul>
@@ -32,9 +32,11 @@
     <div class="card-body tab-content">
         <div class="tab-pane fade show active" id="urun-tab1">
 
-      @if(count($tahsilat01)> 0)   
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#YeniOdemeModal"><i class="icon-plus3"></i> Ödeme Girişi</button>
+       <hr>
+        @if(count($odeme01)> 0)
 
-           <table class="table table-striped table-bordered table-hover  table-sm">
+           <table class="table table-striped table-bordered table-hover table-sm">
             <thead>
                 <tr>
  
@@ -51,7 +53,7 @@
                 @php   
                     $genelToplam = 0;    
                 @endphp
-                @foreach($tahsilat01 as $row)
+                @foreach($odeme01 as $row)
                 @php
                     $genelToplam    = $genelToplam + $row->tutar;
                 @endphp
@@ -59,7 +61,7 @@
 
                     
                     <td>
-                        <button class="btn btn-danger btn-sm TahsilatSilButton" id='{{ $row->id }}'><i class="icon-trash mr-1"></i> Sil</button>
+                        <button class="btn btn-danger btn-sm OdemeSilButton" id='{{ $row->id }}'><i class="icon-trash mr-1"></i> Sil</button>
                     </td>
                     <td> 
                         {{ $row->cari->cariadi }}
@@ -73,6 +75,9 @@
                         @if($row->odemetipi=='KART')
                         <span class="badge badge-flat border-primary text-primary">{{ $row->odemetipi }}</span>
                         @endif
+                        @if($row->odemetipi=='SENET' OR $row->odemetipi=='CEK')
+                        <span class="badge badge-flat border-danger text-danger">{{ $row->odemetipi }}</span>
+                        @endif
                     </td>
                     <td class="text-right"><b>{{ para($row->tutar) }} TL</b></td>
                     <td>{{ $row->user->name }}</td>
@@ -81,6 +86,7 @@
                 @endforeach
             </tbody>
         </table>
+
         @else
         
             <div class="alert alert-warning alert-styled-left alert-dismissible">
@@ -92,10 +98,11 @@
 
 
 
+
         </div>
 
         <div class="tab-pane fade" id="urun-tab2">
-            <form id="TahsilatRaporuForm">
+            <form id="OdemeRaporuForm">
 
                 <div class="row">
 
@@ -135,12 +142,12 @@
 
 
                 <div class="text-right">
-                    <button type="button" class="btn btn-primary TahsilatRaporuSubmit">Rapor Oluştur <i class="icon-filter4 ml-2"></i></button>
+                    <button type="button" class="btn btn-primary OdemeRaporuSubmit">Rapor Oluştur <i class="icon-filter4 ml-2"></i></button>
                 </div>
             </form>
- <hr>
 
-            <div id="TahsilatRaporuResponse"></div>
+
+            <div id="OdemeRaporuResponse"></div>
 
 
         </div>
@@ -157,7 +164,7 @@ ________________________________________________________________________________
 $.fn.modal.Constructor.prototype._enforceFocus = function() {};
 $(document).ready(function(){
 
-    $('#TahsilatRaporuForm #cariid').select2({
+    $('#OdemeRaporuForm #cariid').select2({
         ajax : {
             url : '/api/musteri',
             dataType : 'json',
@@ -197,14 +204,14 @@ $(document).ready(function(){
 
 
 <script>
-  $('#TahsilatRaporuForm .startdate').pickadate();
-  $('#TahsilatRaporuForm .enddate').pickadate();
+  $('#OdemeRaporuForm .startdate').pickadate();
+  $('#OdemeRaporuForm .enddate').pickadate();
 </script>
 
 <script type="text/javascript">
-$( ".TahsilatRaporuSubmit" ).click(function() {
+$( ".OdemeRaporuSubmit" ).click(function() {
 
-  var data = $("#TahsilatRaporuForm").serialize();
+  var data = $("#OdemeRaporuForm").serialize();
 
   $.ajaxSetup({
       headers: {
@@ -213,15 +220,15 @@ $( ".TahsilatRaporuSubmit" ).click(function() {
       });
   $.ajax({
           method    : "POST",
-          url       : "{{ url('tahsilat/RaporSorgu') }}",
+          url       : "{{ url('odeme/OdemeRaporu') }}",
           data      : data,
           dataType  : "JSON",
       })
   .done(function(response) {
       
-      $("#TahsilatRaporuResponse").html(response.rapor);
+      $("#OdemeRaporuResponse").html(response.rapor);
 
-      $('.TahsilatRaporuTable').DataTable({
+      $('.OdemeRaporuTable').DataTable({
           "lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"]],
             "order": [[ 0, "desc" ]],
           buttons: {
@@ -279,11 +286,11 @@ $( ".TahsilatRaporuSubmit" ).click(function() {
 
 <!-- 
 ___________________________________________________________________________________________________
-Ürün SİLME
+ÖDEME SİLME
 ___________________________________________________________________________________________________
 -->
 <script>
-    $(document).on('click', '.TahsilatSilButton', function(e){
+    $(document).on('click', '.OdemeSilButton', function(e){
     e.preventDefault();
       const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
@@ -295,7 +302,7 @@ ________________________________________________________________________________
 
     swalWithBootstrapButtons.fire({
       title: 'Dikkat!',
-      text: "Tahsilat silinsin mi?",
+      text: "Ödeme silinsin mi?",
       type: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Evet, Sil',
@@ -314,7 +321,7 @@ ________________________________________________________________________________
 
     $.ajax({
             method    : "POST",
-            url       : "{{ url('tahsilat/TahsilatSil') }}",
+            url       : "{{ url('odeme/OdemeSil') }}",
             data      : {"id":id},
             dataType  : "JSON",
             })

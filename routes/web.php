@@ -145,6 +145,12 @@ Route::group(['middleware' => ['auth']], function () {
    Route::get('tahsilat/TahsilatRaporu', ['uses' => 'Tahsilat\TahsilatController@TahsilatRaporu', 'as' => 'tahsilat.TahsilatRaporu']);
    Route::post('tahsilat/RaporSorgu', ['uses' => 'Tahsilat\TahsilatController@RaporSorgu', 'as' => 'tahsilat.RaporSorgu']);
 
+   // ODEMELER
+   Route::get('odeme', ['uses' => 'Odeme\OdemeController@index', 'as' => 'odeme.index']);
+   Route::post('odeme', ['uses' => 'Odeme\OdemeController@store', 'as' => 'odeme.store']);
+   Route::post('odeme/OdemeSil', ['uses' => 'Odeme\OdemeController@OdemeSil', 'as' => 'odeme.OdemeSil']);
+   Route::post('odeme/OdemeRaporu', ['uses' => 'Odeme\OdemeController@OdemeRaporu', 'as' => 'odeme.OdemeRaporu']);
+
 
 
   

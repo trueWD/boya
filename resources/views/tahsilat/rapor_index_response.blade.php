@@ -1,4 +1,5 @@
 
+ @if(count($tahsilat01)> 0)  
 
 <table class="table table-striped table-bordered table-hover table-sm TahsilatRaporuTable">
     <thead>
@@ -48,3 +49,11 @@
     </tbody>
 </table>
 
+        @else
+        
+            <div class="alert alert-warning alert-styled-left alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+                <span class="font-weight-semibold">BİLGİ!</span> Bu tarite hiç ödeme yok!..
+            </div>
+
+        @endif
