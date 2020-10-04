@@ -71,7 +71,7 @@
 	<a href="#" class="nav-link"><i class="icon-home7"></i><span>DEPO YÖNETİMİ</span></a>
 
 	<ul class="nav nav-group-sub" data-submenu-title="DEPO YÖNETİMi">
-		<li class="nav-item"><a href="{{ url('depo/urunKabul') }}" class="nav-link {{ request()->is('depo/urunKabul') ? 'active' : '' }}">Fason Ürün Kabul</a></li>
+		<li class="nav-item"><a href="{{ url('depo') }}" class="nav-link {{ request()->is('depo') ? 'active' : '' }}">Depo Yönetimi</a></li>
 		<li class="nav-item"><a href="{{ url('depo/etiket') }}" class="nav-link {{ request()->is('depo/etiket') ? 'active' : '' }}">Etiket İşlemleri</a></li>
 		<li class="nav-item"><a href="{{ url('depo') }}" class="nav-link {{ request()->is('depo') ? 'active' : '' }}">Sayım İşlemleri</a></li>
 	</ul>		

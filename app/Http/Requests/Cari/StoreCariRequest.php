@@ -17,7 +17,6 @@ class StoreCariRequest extends FormRequest
             'cariadi' => 'required',
             'vergino' => 'required',
             'vergidairesi' => 'required',
-            'temsilci' => 'required',
         ];
     }
 }

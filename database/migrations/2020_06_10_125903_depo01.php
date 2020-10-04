@@ -13,17 +13,12 @@ class Depo01 extends Migration
             $table->string('depoadi')->nullable();
             $table->string('aciklama')->nullable();
             $table->string('tipi')->nullable();
-            $table->string('uretim_grubu')->nullable();
-            $table->string('kapasite')->nullable();
-            $table->string('uzunluk')->nullable();
-            $table->string('genislik')->nullable();
-            $table->string('yukseklik')->nullable();
             $table->string('sira')->nullable();
+            $table->string('userid')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
     }
-
 
     public function down()
     {

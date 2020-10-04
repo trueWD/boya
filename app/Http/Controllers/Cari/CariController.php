@@ -62,7 +62,19 @@ class CariController extends Controller
         if (!Gate::allows('users_manage')) {
             return abort(401);
         }
+
         $cari = Cari01::findOrFail($request->id);
+        if($cari->bakiye != 0){
+
+            $data = [
+                'title' => 'HATA!',
+                'text' => 'Bakiyesi olan bir cari silinmez!',
+                'type' => 'error',
+            ];
+
+            return response()->json($data);
+        }
+        
         $cari->delete();
 
         $data = [

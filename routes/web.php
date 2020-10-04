@@ -156,6 +156,11 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('cek', ['uses' => 'Odeme\CekController@store', 'as' => 'cek.store']);
    Route::post('cek/CekRaporu', ['uses' => 'Odeme\CekController@CekRaporu', 'as' => 'cek.CekRaporu']);
 
+   //
+   Route::get('depo', ['uses' => 'Depo\DepoController@index', 'as' => 'depo.index']);
+   Route::post('depo', ['uses' => 'Depo\DepoController@store', 'as' => 'depo.store']);
+   Route::post('depo/destroy', ['uses' => 'Depo\DepoController@destroy', 'as' => 'depo.destroy']);
+
 
   
 });

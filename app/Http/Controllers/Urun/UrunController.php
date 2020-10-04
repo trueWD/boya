@@ -53,7 +53,7 @@ class UrunController extends Controller
         if (! Gate::allows('users_manage')) {
             return abort(401);
         }
-
+      //  dd($request->all());
         $kontrol     = Urun01::where('barkod','=',$request->barkod)->get();
 
         if(count($kontrol) > 0){
@@ -68,9 +68,20 @@ class UrunController extends Controller
 
         }
 
+        $fiyat      = tutarToRaw($request->fiyat);
 
-
-        $urun       = Urun01::create($request->all());
+        $urun               = new Urun01;
+        $urun->urunadi      = $request->urunadi;
+        $urun->urunkodu     = $request->urunkodu;
+        $urun->birim        = $request->birim;
+        $urun->marka        = $request->marka;
+        $urun->grubu        = $request->grubu;
+        $urun->barkod       = $request->barkod;
+        $urun->fiyat        = paraEn($fiyat);
+        $urun->stok         = $request->stok;
+        $urun->max_stok     = $request->max_stok;
+        $urun->min_stok     = $request->min_stok;
+        $urun->save();
 
         $data =[
             'title' => 'Başarılı!',
@@ -149,8 +160,19 @@ class UrunController extends Controller
             return abort(401);
         }
 
-        $urun   = Urun01::findOrFail($request->id);
-        $urun->update($request->all());
+        $fiyat      = tutarToRaw($request->fiyat);
+        
+        $urun               = Urun01::findOrFail($request->id);
+        $urun->urunadi      = $request->urunadi;
+        $urun->urunkodu     = $request->urunkodu;
+        $urun->birim        = $request->birim;
+        $urun->marka        = $request->marka;
+        $urun->grubu        = $request->grubu;
+        $urun->fiyat        = paraEn($fiyat);
+        $urun->stok         = $request->stok;
+        $urun->max_stok     = $request->max_stok;
+        $urun->min_stok     = $request->min_stok;
+        $urun->save();
 
         $data =[
             'title' => 'Başarılı!',
@@ -160,7 +182,6 @@ class UrunController extends Controller
 
         return response()->json($data);
     }
-
     /*
     _____________________________________________________________________________________________
     Copy 

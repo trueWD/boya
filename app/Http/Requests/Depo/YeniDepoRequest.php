@@ -4,7 +4,7 @@ namespace App\Http\Requests\Depo;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PiysaEtiketOlusturRequest extends FormRequest
+class YeniDepoRequest extends FormRequest
 {
     public function authorize()
     {
@@ -14,7 +14,7 @@ class PiysaEtiketOlusturRequest extends FormRequest
     public function rules()
     {
         return [
-            'paket_sayisi' => 'required',
+            'depoadi' => 'required',
         ];
     }
 }

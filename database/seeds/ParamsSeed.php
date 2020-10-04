@@ -108,7 +108,7 @@ class ParamsSeed extends Seeder
         $param = Params::create([
 		    "database" => "cari01",
 		    "alan" => "grubu",
-		    "deger" => "TERADIKCI",
+		    "deger" => "TEDARIKCI",
 		    "sira" => "02",
 		    "aciklama" => "Tedarikci müşteri grubu",
         ]);
