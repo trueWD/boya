@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(Urun01Seed::class);
         $this->call(Depo01Seed::class);
         $this->call(Depo02Seed::class);
+        $this->call(Fiyat01Seed::class);
 
         Eloquent::unguard();
         $ulkeler = 'database/seeds/sql/ulkeler.sql';

@@ -156,11 +156,17 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('cek', ['uses' => 'Odeme\CekController@store', 'as' => 'cek.store']);
    Route::post('cek/CekRaporu', ['uses' => 'Odeme\CekController@CekRaporu', 'as' => 'cek.CekRaporu']);
 
-   //
+   // DEPO
    Route::get('depo', ['uses' => 'Depo\DepoController@index', 'as' => 'depo.index']);
    Route::post('depo', ['uses' => 'Depo\DepoController@store', 'as' => 'depo.store']);
    Route::post('depo/destroy', ['uses' => 'Depo\DepoController@destroy', 'as' => 'depo.destroy']);
-
+   
+   // Fiyat
+   Route::get('fiyat', ['uses' => 'Satis\FiyatController@index', 'as' => 'fiyat.index']);
+   Route::post('fiyat', ['uses' => 'Satis\FiyatController@store', 'as' => 'fiyat.store']);
+   Route::post('fiyat/destroy', ['uses' => 'Satis\FiyatController@destroy', 'as' => 'fiyat.destroy']);
+   Route::post('fiyat/edit', ['uses' => 'Satis\FiyatController@edit', 'as' => 'fiyat.edit']);
+   Route::post('fiyat/update', ['uses' => 'Satis\FiyatController@update', 'as' => 'fiyat.update']);
 
   
 });

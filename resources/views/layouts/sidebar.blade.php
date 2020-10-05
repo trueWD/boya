@@ -20,12 +20,13 @@
 </li>
 
 <!-- Piyasa -->
-<li class="nav-item nav-item-submenu {{ request()->is('tahsilat','tahsilat/*') ? 'nav-item-expanded nav-item-open' : '' }}">
+<li class="nav-item nav-item-submenu {{ request()->is('tahsilat','tahsilat/*','fiyat','fiyat/*') ? 'nav-item-expanded nav-item-open' : '' }}">
 	<a href="#" class="nav-link"><i class="icon-folder-download"></i> <span>SATIŞ YÖNETİMi</span></a>
 
 	<ul class="nav nav-group-sub" data-submenu-title="İÇ PİYASA">
 		<li class="nav-item"><a href="{{ url('tahsilat') }}" class="nav-link {{ request()->is('tahsilat') ? 'active' : '' }}">Tahsilat İşlemleri</a></li>
 		<li class="nav-item"><a href="{{ url('tahsilat/TahsilatRaporu') }}" class="nav-link {{ request()->is('tahsilat/TahsilatRaporu') ? 'active' : '' }}">Tahsilat Raporu</a></li>
+		<li class="nav-item"><a href="{{ url('fiyat') }}" class="nav-link {{ request()->is('fiyat') ? 'active' : '' }}">Fiyat Yönetimi</a></li>
 	</ul>		
 </li>
 

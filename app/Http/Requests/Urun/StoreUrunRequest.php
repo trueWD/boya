@@ -17,6 +17,7 @@ class StoreUrunRequest extends FormRequest
             'urunadi' => 'required',
             'barkod' => 'required',
             'fiyat' => 'required',
+            'fiyat_grubu' => 'required',
         ];
     }
 }

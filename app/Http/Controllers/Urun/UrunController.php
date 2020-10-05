@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Urun01;
 use App\Models\Params;
+use App\Models\Fiyat01;
 use App\Http\Requests\Urun\StoreUrunRequest;
 use App\Http\Requests\Urun\UpdateUrunRequest;
 
@@ -27,6 +28,7 @@ class UrunController extends Controller
 
         $urunler    = Urun01::all();
         $params     = Params::all();
+        $fiyat01    = Fiyat01::all();
 
         $marka = $params->filter(function ($row) {
             return $row->database == 'urun01' AND $row->alan == 'marka';
@@ -41,7 +43,7 @@ class UrunController extends Controller
  
 
 
-        return view('urun.index', compact('urunler','marka','grubu','birim'));
+        return view('urun.index', compact('urunler','marka','grubu','birim','fiyat01'));
     }
     /*
     _____________________________________________________________________________________________
@@ -69,6 +71,10 @@ class UrunController extends Controller
         }
 
         $fiyat      = tutarToRaw($request->fiyat);
+        $fiyat01    = Fiyat01::findOrFail($request->fiyat_grubu);
+
+        $oran               = $fiyat * ($fiyat01->oran / 100);
+        $satis_fiyat        = $fiyat + $oran;
 
         $urun               = new Urun01;
         $urun->urunadi      = $request->urunadi;
@@ -78,6 +84,8 @@ class UrunController extends Controller
         $urun->grubu        = $request->grubu;
         $urun->barkod       = $request->barkod;
         $urun->fiyat        = paraEn($fiyat);
+        $urun->fiyat_grubu  = $request->fiyat_grubu;
+        $urun->satis_fiyat  = $satis_fiyat;
         $urun->stok         = $request->stok;
         $urun->max_stok     = $request->max_stok;
         $urun->min_stok     = $request->min_stok;
@@ -123,8 +131,9 @@ class UrunController extends Controller
             return abort(401);
         }
 
-        $urun       = Urun01::findOrFail($request->id);
+        $urun       = Urun01::with('fiyat01')->findOrFail($request->id);
         $params     = Params::all();
+        $fiyat01    = Fiyat01::all();
 
         $marka = $params->filter(function ($row) {
             return $row->database == 'urun01' AND $row->alan == 'marka';
@@ -144,6 +153,7 @@ class UrunController extends Controller
             'marka' => $marka,
             'grubu' => $grubu,
             'birim' => $birim,
+            'fiyat01' => $fiyat01,
             ])->render();
         return response()->json($data);
 
@@ -161,6 +171,11 @@ class UrunController extends Controller
         }
 
         $fiyat      = tutarToRaw($request->fiyat);
+
+        $fiyat01    = Fiyat01::findOrFail($request->fiyat_grubu);
+
+        $oran               = $fiyat * ($fiyat01->oran / 100);
+        $satis_fiyat        = $fiyat + $oran;
         
         $urun               = Urun01::findOrFail($request->id);
         $urun->urunadi      = $request->urunadi;
@@ -169,6 +184,8 @@ class UrunController extends Controller
         $urun->marka        = $request->marka;
         $urun->grubu        = $request->grubu;
         $urun->fiyat        = paraEn($fiyat);
+        $urun->fiyat_grubu  = $request->fiyat_grubu;
+        $urun->satis_fiyat  = $satis_fiyat;
         $urun->stok         = $request->stok;
         $urun->max_stok     = $request->max_stok;
         $urun->min_stok     = $request->min_stok;

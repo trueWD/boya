@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Urun01;
+use App\Models\Fiyat01;
 use App\Models\Params;
 use App\Models\Fatura01;
 use App\Models\Fatura02;
@@ -321,8 +322,17 @@ class FaturaAlisController extends Controller
         
         // Ürün adetleri kadar stoğu artırma
         foreach ($fatura->urunler as $row) {
+            
+            $urun       = Urun01::findOrFail($row->urun01);
+           
+            //Fiyat Güncelle
+                $fiyat01    = Fiyat01::findOrFail($urun->fiyat_grubu);
+                $oran               = $row->fiyat * ($fiyat01->oran / 100);
+                $satis_fiyat        = $row->fiyat + $oran;
+                $urun->satis_fiyat  = $satis_fiyat;
 
-            $urun   = Urun01::findOrFail($row->urun01);
+            $urun->fiyat        = paraEn($row->fiyat);
+
             $urun->stok     = paraEn($urun->stok + $row->miktar);
             $urun->save();        
 

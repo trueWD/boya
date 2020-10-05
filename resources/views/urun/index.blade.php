@@ -62,9 +62,9 @@
                         <td>{{ $urun->marka }}</td>
                         <td>{{ $urun->urunkodu }}</td>
                         <td>{{ $urun->grubu }}</td>
-                        <td>{{ $urun->stok }}</td>
-                        <td>{{ para($urun->fiyat) }} TL</td>
-                        <td>{{ para($urun->fiyat_satis) }} TL</td>
+                        <td class="text-right"><b>{{ $urun->stok }}</b></td>
+                        <td class="text-right"><b>{{ para($urun->fiyat) }} TL</b></td>
+                        <td class="text-right"><b>{{ para($urun->satis_fiyat) }} TL</b></td>
                     </tr>
                     @endforeach
                 </tbody>

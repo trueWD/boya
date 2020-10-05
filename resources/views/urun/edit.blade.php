@@ -130,6 +130,19 @@
                           </div>
                         </div>
 
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label>Fiyat Kar Gurubu:</label>
+                            <select class="form-control" name="fiyat_grubu">
+                              <option value="{{ $urun->fiyat01->id }}">{{ $urun->fiyat01->adi }}</option>
+                              @foreach ($fiyat01 as $row)
+                                <option value="{{ $row->id }}">{{ $row->adi }}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
+
+
                         
                       </div>
                       <div class="row">

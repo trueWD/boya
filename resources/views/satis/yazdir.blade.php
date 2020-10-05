@@ -107,7 +107,7 @@
                     <td class="text-right">{{ para($row->miktar) }}</td>
                     <td class="text-right">{{ para($row->fiyat) }}</td>
                     <td class="text-right">{{ para($toplam) }}</td>
-                    <td class="text-right">-{{ para($iskontoTutar) }} (%{{ $row->iskonto }})</td>
+                    <td class="text-right">{{ para($iskontoluToplam) }} (%{{ $row->iskonto }})</td>
                     <td class="text-right">{{ para($kdvMiktar) }} (%{{ $row->kdv }})</td>
                     <td class="text-right">{{ para($kdvDahil) }}</td>
 
