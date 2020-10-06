@@ -62,7 +62,7 @@
                         <td>{{ $urun->marka }}</td>
                         <td>{{ $urun->urunkodu }}</td>
                         <td>{{ $urun->grubu }}</td>
-                        <td class="text-right"><b>{{ $urun->stok }}</b></td>
+                        <td class="text-right"><b>{{ $urun->urun02->sum('miktar') }}</b></td>
                         <td class="text-right"><b>{{ para($urun->fiyat) }} TL</b></td>
                         <td class="text-right"><b>{{ para($urun->satis_fiyat) }} TL</b></td>
                     </tr>

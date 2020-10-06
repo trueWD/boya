@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Cari01;
 use App\Models\Siparis01;
 use App\Models\Urun01;
+use App\Models\Urun02;
 use App\Models\Siparis02;
 use App\Models\Banka01;
 use App\User;
@@ -41,6 +42,7 @@ class SatisController extends Controller
 
         $data = new Siparis01;
         $data->userid = auth()->id();
+        $data->depo01 = auth()->user()->depo01;
         $data->durumu = 'AKTIF';
         $data->save();
         
@@ -233,11 +235,34 @@ class SatisController extends Controller
             $iskontoTutarToplam = $iskontoTutarToplam + $iskontoTutar;
 
             // Stok kartını güncelle
-
-            $urun01     = Urun01::findOrFail($row->urun01);
-            $urun01->stok      = $urun01->stok - $row->miktar;
-            $urun01->satilan   = $urun01->satilan + $row->miktar;
+            $urun01             = Urun01::findOrFail($row->urun01);
+            $urun01->satilan    = $urun01->satilan + $row->miktar;
             $urun01->save();
+
+
+
+            $urun02     = Urun02::where('urun01', '=', $urun01->id)->where('depo01', '=', auth()->user()->depo01 )->first();
+            if ($urun02 == NULL) {
+
+                // Ürün yoksa
+                $ekle                   = new Urun02;
+                $ekle->depo01           = auth()->user()->depo01;
+                $ekle->urun01           = $urun01->id;
+                $ekle->miktar           = 0 - $row->miktar;
+                $ekle->save();
+            } else {
+
+                // Bu siparişte zaten bu ürün varise
+                $urun02->miktar = $urun02->miktar - $row->miktar;
+                $urun02->save();
+            }
+
+
+
+
+
+
+         
 
 
 
@@ -303,9 +328,24 @@ class SatisController extends Controller
             // Stok kartını güncelle
 
             $urun01             = Urun01::findOrFail($row->urun01);
-            $urun01->stok       = $urun01->stok - $row->miktar;
             $urun01->satilan    = $urun01->satilan + $row->miktar;
             $urun01->save();
+
+            $urun02     = Urun02::where('urun01', '=', $urun01->id)->where('depo01', '=', auth()->user()->depo01)->first();
+            if ($urun02 == NULL) {
+
+                // Ürün yoksa
+                $ekle                   = new Urun02;
+                $ekle->depo01           = auth()->user()->name;
+                $ekle->urun01           = $urun01->id;
+                $ekle->miktar           = 0 - $row->miktar;
+                $ekle->save();
+            } else {
+
+                // Bu siparişte zaten bu ürün varise
+                $urun02->miktar = $urun02->miktar - $row->miktar;
+                $urun02->save();
+            }
 
 
 
@@ -373,9 +413,24 @@ class SatisController extends Controller
             // Stok kartını güncelle
 
             $urun01             = Urun01::findOrFail($row->urun01);
-            $urun01->stok       = $urun01->stok - $row->miktar;
             $urun01->satilan    = $urun01->satilan + $row->miktar;
             $urun01->save();
+
+            $urun02     = Urun02::where('urun01', '=', $urun01->id)->where('depo01', '=', auth()->user()->depo01)->first();
+            if ($urun02 == NULL) {
+
+                // Ürün yoksa
+                $ekle                   = new Urun02;
+                $ekle->depo01           = auth()->user()->name;
+                $ekle->urun01           = $urun01->id;
+                $ekle->miktar           = 0 - $row->miktar;
+                $ekle->save();
+            } else {
+
+                // Bu siparişte zaten bu ürün varise
+                $urun02->miktar = $urun02->miktar - $row->miktar;
+                $urun02->save();
+            }
 
 
 

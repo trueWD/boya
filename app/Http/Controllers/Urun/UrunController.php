@@ -26,7 +26,7 @@ class UrunController extends Controller
             return abort(401);
         }
 
-        $urunler    = Urun01::all();
+        $urunler    = Urun01::with('urun02')->get();
         $params     = Params::all();
         $fiyat01    = Fiyat01::all();
 
@@ -86,7 +86,6 @@ class UrunController extends Controller
         $urun->fiyat        = paraEn($fiyat);
         $urun->fiyat_grubu  = $request->fiyat_grubu;
         $urun->satis_fiyat  = $satis_fiyat;
-        $urun->stok         = $request->stok;
         $urun->max_stok     = $request->max_stok;
         $urun->min_stok     = $request->min_stok;
         $urun->save();
@@ -109,7 +108,19 @@ class UrunController extends Controller
         if (!Gate::allows('users_manage')) {
             return abort(401);
         }
-        $urun01 = Urun01::findOrFail($request->id);
+        $urun01 = Urun01::with('urun02')->findOrFail($request->id);
+
+        if($urun01->urun02->sum('miktar') > 0){
+            $data = [
+                'title' => 'HATA!',
+                'text' => 'Bu ürüne ait stok mevcut silnmez!',
+                'type' => 'error',
+            ];
+            return response()->json($data);
+        }
+
+
+
         $urun01->delete();
 
         $data = [
@@ -117,7 +128,6 @@ class UrunController extends Controller
             'text' => 'Kullanıcı Silindi',
             'type' => 'success',
         ];
-
         return response()->json($data);
     }
     /*
@@ -186,7 +196,6 @@ class UrunController extends Controller
         $urun->fiyat        = paraEn($fiyat);
         $urun->fiyat_grubu  = $request->fiyat_grubu;
         $urun->satis_fiyat  = $satis_fiyat;
-        $urun->stok         = $request->stok;
         $urun->max_stok     = $request->max_stok;
         $urun->min_stok     = $request->min_stok;
         $urun->save();

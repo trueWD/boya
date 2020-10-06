@@ -7,6 +7,13 @@
 @endsection
 @section('content')
 
+@if(auth()->user()->depo01== NULL)
+
+<div class="alert alert-warning alert-styled-left alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+    <span class="font-weight-semibold">DİKKAT!</span><b> {{ auth()->user()->name }}</b> kullanıcısına yetkili olduğu <b>DEPO</b> veya <b>ŞUBE</b>'yi tanımlayınız. Lütfen <a href="{{ url('admin/users') }}" class="btn-link">Burdan</a> kullanıcıyı düzenle deyip yetkili olduğu şubeyi seçiniz....
+</div>
+@else
 
 
 <div class="card">
@@ -158,7 +165,7 @@
     </div>
 </div>
 
-
+@endif
 
 <!-- 
 ___________________________________________________________________________________________________

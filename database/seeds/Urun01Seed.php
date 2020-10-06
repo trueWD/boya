@@ -24,7 +24,7 @@ class Urun01Seed extends Seeder
             'grubu' =>  'BOYA',
             'fiyat_grubu' =>  '1',
             'fiyat' =>  '1000',
-            'stok' =>  '10',
+            'stok' =>  '0',
             'satis_fiyat' =>  '350',
             'max_stok' =>  '500',
             'min_stok' =>  '10',
@@ -39,7 +39,7 @@ class Urun01Seed extends Seeder
             'grubu' =>  'BOYA',
             'fiyat_grubu' =>  '1',
             'fiyat' =>  '1000',
-            'stok' =>  '10',
+            'stok' =>  '0',
             'satis_fiyat' =>  '350',
             'max_stok' =>  '500',
             'min_stok' =>  '10',
@@ -56,9 +56,10 @@ class Urun01Seed extends Seeder
             'fiyat_grubu' =>  '2',
             'fiyat' =>  '1000',
             'satis_fiyat' =>  '350',
-            'stok' =>  '10',
+            'stok' =>  '0',
             'max_stok' =>  '500',
             'min_stok' =>  '10',
+            'kdv' =>  '18',
         ]);
         $urun = Urun01::create([
             'barkod' =>  '3333',
@@ -72,7 +73,7 @@ class Urun01Seed extends Seeder
             'fiyat_grubu' =>  '2',
             'fiyat' =>  '1000',
             'satis_fiyat' =>  '350',
-            'stok' =>  '10',
+            'stok' =>  '0',
             'max_stok' =>  '500',
             'min_stok' =>  '10',
             
@@ -89,7 +90,7 @@ class Urun01Seed extends Seeder
             'fiyat_grubu' =>  '1',
             'fiyat' =>  '1000',
             'satis_fiyat' =>  '350',
-            'stok' =>  '10',
+            'stok' =>  '0',
             'max_stok' =>  '500',
             'min_stok' =>  '10',
         ]);
@@ -105,7 +106,7 @@ class Urun01Seed extends Seeder
             'fiyat_grubu' =>  '2',
             'fiyat' =>  '1000',
             'satis_fiyat' =>  '350',
-            'stok' =>  '10',
+            'stok' =>  '0',
             'max_stok' =>  '500',
             'min_stok' =>  '10',
         ]);

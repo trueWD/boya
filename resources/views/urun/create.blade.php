@@ -115,14 +115,8 @@
 
                           
 
-                        <div class="col-md-6">
-                          <div class="form-group">
-                            <label>Stok Miktarı:</label>
-                            <input type="text" name="stok" class="form-control" id="stok" placeholder="Stok" autocomplete="off">
-                          </div>
-                        </div>
-
-                        <div class="col-md-6">
+            
+                        <div class="col-md-12">
                           <div class="form-group">
                             <label>Fiyat Kar Gurubu:</label>
                             <select class="form-control" name="fiyat_grubu">

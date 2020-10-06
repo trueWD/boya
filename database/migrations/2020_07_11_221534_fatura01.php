@@ -14,6 +14,7 @@ class Fatura01 extends Migration
             $table->string('durumu')->nullable();
             $table->string('fatura_tarihi')->nullable();
             $table->string('cari01')->nullable();
+            $table->string('depo01')->nullable();
             $table->string('cariadi')->nullable();
             $table->string('faturano')->nullable();
             $table->string('parabirimi')->nullable();

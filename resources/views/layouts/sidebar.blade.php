@@ -73,8 +73,7 @@
 
 	<ul class="nav nav-group-sub" data-submenu-title="DEPO YÖNETİMi">
 		<li class="nav-item"><a href="{{ url('depo') }}" class="nav-link {{ request()->is('depo') ? 'active' : '' }}">Depo Yönetimi</a></li>
-		<li class="nav-item"><a href="{{ url('depo/etiket') }}" class="nav-link {{ request()->is('depo/etiket') ? 'active' : '' }}">Etiket İşlemleri</a></li>
-		<li class="nav-item"><a href="{{ url('depo') }}" class="nav-link {{ request()->is('depo') ? 'active' : '' }}">Sayım İşlemleri</a></li>
+		<li class="nav-item"><a href="{{ url('sayim') }}" class="nav-link {{ request()->is('sayim') ? 'active' : '' }}">Sayım İşlemleri</a></li>
 	</ul>		
 </li>
 
@@ -99,7 +98,6 @@
 		<li class="nav-item"><a href="{{ url('settings') }}" class="nav-link {{ request()->is('settings') ? 'active' : '' }}">Genel Ayarlar</a></li>
 		<li class="nav-item"><a href="{{ url('params') }}" class="nav-link {{ request()->is('params') ? 'active' : '' }}">Parametre Ayarları</a></li>
 		<li class="nav-item"><a href="{{ url('banka') }}" class="nav-link {{ request()->is('banka') ? 'active' : '' }}">Banka Hesapları</a></li>
-		<li class="nav-item"><a href="{{ url('settings/depo') }}" class="nav-link {{ request()->is('settings/depo') ? 'active' : '' }}">Depo Yönetimi</a></li>
 	</ul>		
 </li>
 

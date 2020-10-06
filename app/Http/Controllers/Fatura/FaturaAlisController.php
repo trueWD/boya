@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Urun01;
+use App\Models\Urun02;
 use App\Models\Fiyat01;
 use App\Models\Params;
 use App\Models\Fatura01;
 use App\Models\Fatura02;
 use App\Models\Cari01;
+use App\Models\Depo01;
 use App\User;
 use App\Http\Requests\Fatura\AlisFaturaRequest;
 use App\Http\Requests\Fatura\AlisUrunEkleRequest;
@@ -29,12 +31,14 @@ class FaturaAlisController extends Controller
             return abort(401);
         }
 
+        $depo01  = Depo01::all();
+
         $fatura     = Fatura01::where('tipi','=','ALIS')->where('durumu','=','AKTIF')->limit(100)->orderBy('id','DESC')->get();
 
  
 
 
-        return view('fatura.alis.index', compact('fatura'));
+        return view('fatura.alis.index', compact('fatura', 'depo01'));
     }
     /*
     _____________________________________________________________________________________________
@@ -88,10 +92,12 @@ class FaturaAlisController extends Controller
         }
 
         $fatura01   = Fatura01::findOrFail($request->id);
+        $depo01  = Depo01::all();
         
         $data['FaturaEdit']       = view('fatura.alis.edit',
         [
             'fatura01' => $fatura01,
+            'depo01' => $depo01,
             ])->render();
         return response()->json($data);
 
@@ -326,16 +332,33 @@ class FaturaAlisController extends Controller
             $urun       = Urun01::findOrFail($row->urun01);
            
             //Fiyat Güncelle
-                $fiyat01    = Fiyat01::findOrFail($urun->fiyat_grubu);
-                $oran               = $row->fiyat * ($fiyat01->oran / 100);
-                $satis_fiyat        = $row->fiyat + $oran;
-                $urun->satis_fiyat  = $satis_fiyat;
+            $fiyat01            = Fiyat01::findOrFail($urun->fiyat_grubu);
+            $oran               = $row->fiyat * ($fiyat01->oran / 100);
+            $satis_fiyat        = $row->fiyat + $oran;
+            $urun->satis_fiyat  = $satis_fiyat;
 
             $urun->fiyat        = paraEn($row->fiyat);
+            $urun->save();
 
-            $urun->stok     = paraEn($urun->stok + $row->miktar);
-            $urun->save();        
 
+
+
+            $urun02     = Urun02::where('urun01', '=', $urun->id)->where('depo01', '=', $fatura->depo01)->first();
+            if ($urun02 == NULL){
+                
+                // Ürün yoksa
+                $ekle                   = new Urun02;
+                $ekle->depo01           = $fatura->depo01;
+                $ekle->urun01           = $urun->id;
+                $ekle->miktar           = $row->miktar;
+                $ekle->save();
+
+            } else {
+
+                // Bu siparişte zaten bu ürün varise
+                $urun02->miktar = $urun02->miktar + $row->miktar;
+                $urun02->save();
+            }
 
         }
         // cari bakiyesi artırma
@@ -372,8 +395,11 @@ class FaturaAlisController extends Controller
         foreach ($fatura->urunler as $row) {
 
             $urun   = Urun01::findOrFail($row->urun01);
-            $urun->stok     = paraEn($urun->stok - $row->miktar);
-            $urun->save();        
+
+
+            $urun02     = Urun02::where('urun01', '=', $urun->id)->where('depo01', '=', $fatura->depo01)->first();
+            $urun02->miktar = $urun02->miktar - $row->miktar;
+            $urun02->save();
 
 
         }

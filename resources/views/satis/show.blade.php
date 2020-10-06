@@ -8,6 +8,15 @@
 @endsection
 @section('content')
 
+@if(auth()->user()->depo01 != $siparis01->depo01)
+
+<div class="alert alert-warning alert-styled-left alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+    <span class="font-weight-semibold">DİKKAT!</span><b> {{ auth()->user()->name }}</b> Siz bu Depo veya Şubede işlem yapmak için yetkili değilsiniz!..
+</div>
+@else
+
+
 <div class="row">
 
     @if($siparis01->durumu =='AKTIF')
@@ -1191,6 +1200,6 @@ e.preventDefault();
     });
 });
 </script>
-
+@endif
 
 @endsection

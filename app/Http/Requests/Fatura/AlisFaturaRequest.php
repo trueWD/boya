@@ -16,6 +16,7 @@ class AlisFaturaRequest extends FormRequest
         return [
             'faturano' => 'required',
             'cariid' => 'required',
+            'depo01' => 'required',
         ];
     }
 }

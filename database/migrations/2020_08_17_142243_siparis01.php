@@ -11,6 +11,7 @@ class Siparis01 extends Migration
         Schema::create('siparis01', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('cari01')->nullable();
+            $table->string('depo01')->nullable();
             $table->string('toplam_tutar')->nullable();
             $table->string('toplam_kdv')->nullable();
             $table->string('toplam_iskonto')->nullable();

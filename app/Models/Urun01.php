@@ -20,5 +20,9 @@ class Urun01 extends Model
     {
         return $this->hasOne('App\Models\Fiyat01', 'id', 'fiyat_grubu');
     }
+    public function urun02()
+    {
+        return $this->hasMany('App\Models\Urun02', 'urun01', 'id');
+    }
     
 }

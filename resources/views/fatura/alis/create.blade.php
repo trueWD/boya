@@ -26,6 +26,24 @@
 
                         <div class="row">
 
+                          <div class="col-md-12">
+                            <div class="form-group">
+                              <label>Teslim Alan Depo-Şube:</label>   
+                              <select class="form-control" name="depo01">
+                                <option value="">Lütfen Seçiniz</option>
+                                @foreach ($depo01 as $row)
+                                <option value="{{ $row->id }}">{{ $row->depoadi }}</option>
+                                @endforeach
+                              </select>
+                                
+                            </div>
+                          </div>
+                            
+                        </div>
+
+
+                        <div class="row">
+
                           <div class="col-md-6">
                             <label>Bitiş tarihi:</label>
                             <div class="input-group">

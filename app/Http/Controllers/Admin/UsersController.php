@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use Auth;
 use Hash;
 use App\User;
+use App\Models\Depo01;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -26,7 +27,7 @@ class UsersController extends Controller
             return abort(401);
         }
 
-        $users = User::all();
+        $users = User::with('depo01')->get();
         $roles = Role::get()->pluck('name', 'name');
 
         return view('admin.users.index', compact('users','roles'));
@@ -91,9 +92,13 @@ class UsersController extends Controller
         if (! Gate::allows('users_manage')) {
             return abort(401);
         }
-        $user               = User::findOrFail($request->id);
+
+       // dd($request->all());
+
+        $user               = User::with('depo01')->findOrFail($request->id);
         $roles              = Role::get()->pluck('name', 'name');
-        $data['edituser']   = view('admin.users.edit',['user' => $user,'roles' => $roles,])->render();
+        $depo01             = Depo01::all();
+        $data['edituser']   = view('admin.users.edit',['user' => $user,'roles' => $roles, 'depo01' => $depo01])->render();
 
 
         return response()->json($data);

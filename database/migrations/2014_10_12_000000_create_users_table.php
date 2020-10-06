@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('theme')->nullable();
             $table->string('menutipi')->nullable();
             $table->string('remember_token')->nullable();
+            $table->string('depo01')->nullable();
 
             $table->timestamps();
 

@@ -33,6 +33,7 @@
                         <th>Adı Soyadı</th>
                         <th>Email</th>
                         <th>Roller</th>
+                        <th>Şube</th>
                         <th>Kayıt Tarihi</th>
                     </tr>
                 </thead>
@@ -60,6 +61,7 @@
                             <span class="badge badge-info">{{ $role }}</span>
                             @endforeach
                         </td>
+                        <td>{{ $user->depo01->depoadi }}</td>
                         <td>{{ $user->created_at }}</td>
                     </tr>
                     @endforeach
