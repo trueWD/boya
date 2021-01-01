@@ -64,7 +64,7 @@ class SatisController extends Controller
             return abort(401);
         }
 
-        $siparis01      = Siparis01::with('siparis02')->findOrFail($id);
+        $siparis01      = Siparis01::with('siparis02','notlar')->findOrFail($id);
         $siparis02      = Siparis02::with('urunbilgisi')->where('siparis01','=', $siparis01->id)->get();
         $banka01        = Banka01::all();
 
@@ -107,7 +107,7 @@ class SatisController extends Controller
             $ekle->siparis01        = $siparis01->id;
             $ekle->urun01           = $urun01->id;
             $ekle->birim            = $urun01->birim;
-            $ekle->miktar           = 1;
+            $ekle->miktar           = $request->miktar;
             $ekle->fiyat            = $urun01->satis_fiyat;
             $ekle->iskonto          = $request->iskonto;
             $ekle->kdv              = $urun01->kdv;
@@ -120,7 +120,7 @@ class SatisController extends Controller
             // Bu siparişte zaten bu ürün varise
 
 
-            $guncelle->miktar = $guncelle->miktar + 1;
+            $guncelle->miktar = $guncelle->miktar + $request->miktar;
 
             $guncelle->save();
             
@@ -170,7 +170,7 @@ class SatisController extends Controller
             $ekle->siparis01        = $siparis01->id;
             $ekle->urun01           = $urun01->id;
             $ekle->birim            = $urun01->birim;
-            $ekle->miktar           = 1;
+            $ekle->miktar           = $request->miktar;
             $ekle->fiyat            = $urun01->satis_fiyat;
             $ekle->iskonto          = $request->iskonto;
             $ekle->kdv              = $urun01->kdv;
@@ -183,7 +183,7 @@ class SatisController extends Controller
             // Bu siparişte zaten bu ürün varise
 
 
-            $guncelle->miktar = $guncelle->miktar + 1;
+            $guncelle->miktar = $guncelle->miktar + $request->miktar;
 
             $guncelle->save();
             

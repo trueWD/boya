@@ -37,10 +37,10 @@
                         <label for="roles" class="col-sm-4 col-form-label">Yetkili Oldğu Depo-Şube</label>
                         <div class="col-sm-8">
                             <select class="form-control" name="depo01">
-                                @if( $user->depo01 == NULL)
+                              @if( $user->depoFirst == NULL)
                               <option value="">Lütfen Seçiniz</option>
                               @else
-                              <option value="{{ $user->depo01->id }}">{{ $user->depo01->depoadi }}</option>
+                              <option value="{{ $user->depoFirst->id }}">{{ $user->depoFirst->depoadi }}</option>
                               @endif
                               @foreach ($depo01 as $row)
                                 <option value="{{ $row->id }}">{{ $row->depoadi }}</option>

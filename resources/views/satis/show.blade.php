@@ -32,13 +32,16 @@
 
                     
                     <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">ÜRÜN BARKODU:</label>
+                        <label class="col-lg-2 col-form-label">BARKODU:</label>
                         <div class="col-lg-6">
                             <input type="text" class="form-control" name="barkod" id="barkod" placeholder="Barkod" autocomplete="off" autofocus>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-2">
+                            <input type="text" class="form-control" name="miktar" id="miktar" placeholder="Miktar" value="1" autocomplete="off">
+                        </div>
+                        <div class="col-lg-2">
                             <input type="hidden" name="id" value="{{ $siparis01->id }}">
-                            <button type="button" class="btn btn-primary BarkodOkuSubmit"><i class="icon-checkmark mr-1 icon-1x"></i> EKLE</button>
+                            <button type="submit" class="btn btn-primary BarkodOkuSubmit"><i class="icon-checkmark mr-1 icon-1x"></i> EKLE</button>
                         </div>
                     </div>
 
@@ -46,11 +49,14 @@
                 <form id="UrunGirisForm">
  
                     <div class="form-group row">
-                        <label class="col-lg-3 col-form-label">ÜRÜN ARAMA:</label>
+                        <label class="col-lg-2 col-form-label">ARAMA:</label>
                         <div class="col-lg-6">
                             <select class="js-example-basic-single js-states form-control select urunid text-primary" name="urunid" id="urunid"></select>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-2">
+                            <input type="text" class="form-control" name="miktar" id="miktar" placeholder="Miktar" value="1" autocomplete="off">
+                        </div>
+                        <div class="col-lg-2">
                             <input type="hidden" name="id" value="{{ $siparis01->id }}">
                             <button type="button" class="btn btn-warning UrunGirisSubmit"><i class="icon-checkmark mr-1 icon-1x"></i> EKLE</button>
                         </div>
@@ -114,8 +120,9 @@
                 @endforeach
                     <form id="NakitKapatForm">
 
-                   
+                    @if($genel_toplam > 0)
                     <button type="button" class="btn btn-success NakitKapatSubmit"><i class="icon-cash3 mr-1"></i> NAKİT ÖDEME</button>
+                    @endif
                     <button type="button" class="btn btn-danger FisIptalButton" id="{{ $siparis01->id }}"><i class="icon-trash mr-1"></i> FİŞ İPTAL</button>
                     <input type="hidden" name="id" value="{{ $siparis01->id }}">
                     <hr>
@@ -170,8 +177,9 @@
 
                     <form id="KartKapatForm">
 
-                    
+                    @if($genel_toplam > 0)
                         <button type="button" class="btn btn-success KartKapatSubmit"><i class="icon-credit-card mr-1"></i> KART ÖDEME</button>
+                    @endif
                         <button type="button" class="btn btn-danger FisIptalButton" id="{{ $siparis01->id }}"><i class="icon-trash mr-1"></i> FİŞ İPTAL</button>
                         <input type="hidden" name="id" value="{{ $siparis01->id }}">
                         <hr>
@@ -222,8 +230,9 @@
 
                     <form id="VeresiyeKapatForm">
 
-                    
+                        @if($genel_toplam > 0)
                         <button type="button" class="btn btn-success VeresiyeKapatSubmit"><i class="icon-notebook mr-1"></i> VERESİYE YAZ</button>
+                        @endif
                         <button type="button" class="btn btn-danger FisIptalButton" id="{{ $siparis01->id }}"><i class="icon-trash mr-1"></i> FİŞ İPTAL</button>
                         <input type="hidden" name="id" value="{{ $siparis01->id }}">
                         <hr>
@@ -411,7 +420,7 @@
         </table>
 
         <div class="row">
-          <div class="col-md-6 col align-self-end">
+          <div class="col-md-6">
             <table class="table table-bordered table-hover">
               <tbody>
                 <tr>
@@ -432,6 +441,52 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+          <div class="col-md-6">
+           
+            <form id="NotEkleForm">
+                
+                    <div class="card">
+                    <div class="card-header">
+                        <h6 class="card-title"><span class="text-danger"> NOT EKLEYİN</span> </h6>
+                    </div>
+
+
+                    <div class="card-body">
+                        
+                        <ul class="media-list media-chat media-chat-scrollable mb-3">
+
+                            <div id="NotlarResponse">
+                        @foreach($siparis01->notlar as $not) 
+                        <li class="media">
+                        <div class="mr-3">
+                            <button type="button" id="{{ $not->id }}" class="btn btn-outline-danger btn-sm deleteNot"></i> Sil</button>
+                        </div>
+
+                        <div class="media-body">
+                            <div class="media-chat-item">{{ $not->not }}</div>
+                            <div class="font-size-sm text-muted mt-2"> {{ $not->username }} </div>
+                        </div>
+                        </li>
+                        @endforeach
+                        </div>
+                        </ul>
+
+                        
+                        <textarea name="not" class="form-control mb-3" id="not_textarea" rows="2" cols="1" placeholder="Lütfen bir not giriniz" autocomplate="off"></textarea>
+
+                        <div class="d-flex align-items-center">
+                        <input type="hidden"  name="model" value="siparis01">
+                        <input type="hidden"  name="modelid" value="{{ $siparis01->id }}">
+                        <button type="button" class="btn bg-primary-400 btn-labeled btn-labeled-right ml-auto NotEkleSubmit"><b><i class="icon-filter4"></i></b> Kaydet</button>
+                        </div>
+                    </div>
+                    </div>
+
+                
+                </form>
+
+
           </div>
         </div>
 
@@ -547,9 +602,9 @@ Barkod Okuma
 ____________________________________________________________________________________________
 -->
 <script type="text/javascript">
-$(document).on('click', '.BarkodOkuSubmit', function(e){
-e.preventDefault();
- 
+$(document).ready(function(){
+    $(".BarkodOkuSubmit").click(function(){
+
 var data = $("#BarkodOkuForm").serialize();
 
 $.ajaxSetup({
@@ -597,8 +652,14 @@ $.ajax({
         });
 
     });
+
+
+
+        return false;
+    });
 });
-</script>
+</script> 
+
 <!-- 
 ____________________________________________________________________________________________
 Ürün Adı Okuma
@@ -1081,17 +1142,75 @@ ________________________________________________________________________________
 </script>
 @endif
 
-
-
-
-
-
+<!-- 
+___________________________________________________________________________________________________
+Not EKLEME
+___________________________________________________________________________________________________
+-->
 <script type="text/javascript">
-    $(document).on('click', '.CariEdit', function (e) {
+ $(document).on('click', '.NotEkleSubmit', function (e) {
+  e.preventDefault();
+    var data = $("#NotEkleForm").serialize();
+
+    $.ajaxSetup({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+      });
+
+    $.ajax({
+            method    : "POST",
+            url       : "{{ url('notlar') }}",
+            data      : data,
+            dataType  : "JSON",
+            })
+        .done(function(response) {  
+            console.log("Dönen Sonuç: ", response.responseJSON);
+            if(response.type == 'success'){
+
+                $("#NotlarResponse").html(response.notlar);
+                new PNotify({
+                    title: response.title,
+                    text: response.text,
+                    addclass: 'alert bg-success border-success alert-styled-left'
+                });
+                
+                $("#not_textarea").val('');
+
+
+              }else{
+
+                new PNotify({
+                    title: response.title,
+                    text: response.text,
+                    addclass: 'alert bg-danger border-danger alert-styled-left'
+                });
+
+
+              }
+          }).fail(function(response){
+
+              new PNotify({
+                  title: 'Hata!',
+                  text: 'Ters giden birşeyler var :(' ,
+                  addclass: 'alert bg-danger border-danger alert-styled-left'
+              });
+            
+          });
+});
+
+</script>
+<!-- 
+___________________________________________________________________________________________________
+Not SİLME
+___________________________________________________________________________________________________
+-->
+<script type="text/javascript">
+    $(document).on('click', '.deleteNot', function (e) {
         e.preventDefault();
-        //var id = $(this).data('id');
 
             var id = $(this).attr("id");
+
 
             $.ajaxSetup({
                 headers: {
@@ -1101,14 +1220,35 @@ ________________________________________________________________________________
 
             $.ajax({
                     method    : "POST",
-                    url       : "{{ url('cari/edit') }}",
+                    url       : "{{ url('notlar/destroy') }}",
                     data      : {"id":id},
                     dataType  : "JSON",
                 })
             .done(function(response) {
                 
-                $("#CariEditResponse").html(response.cariedit);
-                $('#CariEditModal').modal('show');
+              if(response.type == 'success'){
+
+                    new PNotify({
+                        title: response.title,
+                        text: response.text,
+                        addclass: 'alert bg-success border-success alert-styled-left'
+                    });
+
+                     if(response.type == 'success'){ // if true (1)
+                     setTimeout(function(){// wait for 5 secs(2)
+                            location.reload(); // then reload the page.(3)
+                        }, 1000); 
+                    }
+
+                    }else{
+
+                    new PNotify({
+                        title: response.title,
+                        text: response.text,
+                        addclass: 'alert bg-danger border-danger alert-styled-left'
+                    });
+
+                    }
 
                 })
             .fail(function(response) {
@@ -1121,85 +1261,8 @@ ________________________________________________________________________________
     });
 </script>
 
-<script type="text/javascript">
-$(document).on('click', '.CariDelete', function(e){
-e.preventDefault();
 
-  const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-danger',
-      },
-      buttonsStyling: false,
-    })
 
-    swalWithBootstrapButtons.fire({
-      title: 'Dikkat!',
-      text: "Bu kaydı silmek istediğinizden eminmisiniz?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Evet Sil!',
-      cancelButtonText: 'Hayır!',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.value) {
-
-    var id = $(this).attr("id");
-
-    console.log(id);
-
-    $.ajaxSetup({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-      });
-
-    $.ajax({
-            method    : "POST",
-            url       : "{{ url('cari/destroy') }}",
-            data      : {"id":id},
-            dataType  : "JSON",
-            })
-        .done(function(response) {
-            console.log("Dönen Sonuç: ", response.responseJSON);
-            if(response.type == 'success'){
-
-              Swal.fire({
-                  confirmButton: 'btn btn-success',
-                    title: response.title,
-                    text: response.text,
-                    icon: response.type,
-                    confirmButtonText: 'Tamam'
-                  });
-                 if(response.type == 'success'){ // if true (1)
-                      setTimeout(function(){// wait for 5 secs(2)
-                           location.reload(); // then reload the page.(3)
-                      }, 2000);
-                   }
-              }else{
-                Swal.fire({
-                    confirmButton: 'btn btn-success',
-                    title: response.title,
-                    text: response.text,
-                    icon: response.type,
-                    confirmButtonText: 'Tamam'
-                  });
-              }
-            }).fail(function(response){
-              Swal.fire({
-                    
-                  title: 'HATA!',
-                  text: 'Sistemsel bir hata oluştur lütfen logları inceleyin',
-                  icon: 'error',
-                  confirmButtonText: 'Tamam',
-                  confirmButton: 'btn btn-success',
-                });
-          });
-
-      }
-    });
-});
-</script>
 @endif
 
 @endsection

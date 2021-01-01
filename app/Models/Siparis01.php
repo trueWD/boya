@@ -28,6 +28,10 @@ class Siparis01 extends Model
     {
         return $this->hasMany('App\Models\Siparis02', 'siparis01', 'id');
     }
+    public function notlar()
+    {
+        return $this->hasMany('App\Models\Not01', 'modelid', 'id')->where('model','=','siparis01');
+    }
 
 
 

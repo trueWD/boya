@@ -27,7 +27,8 @@ class UsersController extends Controller
             return abort(401);
         }
 
-        $users = User::with('depo01')->get();
+        $users = User::with('depoFirst')->get();
+
         $roles = Role::get()->pluck('name', 'name');
 
         return view('admin.users.index', compact('users','roles'));
@@ -95,7 +96,7 @@ class UsersController extends Controller
 
        // dd($request->all());
 
-        $user               = User::with('depo01')->findOrFail($request->id);
+        $user               = User::with('depoFirst')->findOrFail($request->id);
         $roles              = Role::get()->pluck('name', 'name');
         $depo01             = Depo01::all();
         $data['edituser']   = view('admin.users.edit',['user' => $user,'roles' => $roles, 'depo01' => $depo01])->render();
@@ -115,7 +116,11 @@ class UsersController extends Controller
             return abort(401);
         }
         $user   = User::findOrFail($request->id);
-        $user->update($request->all());
+        $user->name     = $request->name;
+        $user->email    = $request->email;
+        $user->depo01    = $request->depo01;
+        $user->save();
+
         if($request->input('roles') !=NULL){
             $roles = $request->input('roles') ? $request->input('roles') : [];
             $user->syncRoles($roles);

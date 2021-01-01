@@ -167,7 +167,11 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('fiyat/destroy', ['uses' => 'Satis\FiyatController@destroy', 'as' => 'fiyat.destroy']);
    Route::post('fiyat/edit', ['uses' => 'Satis\FiyatController@edit', 'as' => 'fiyat.edit']);
    Route::post('fiyat/update', ['uses' => 'Satis\FiyatController@update', 'as' => 'fiyat.update']);
+   
 
+   //NOTLAR
+   Route::post('notlar', ['uses' => 'Notlar\NotlarController@store', 'as' => 'notlar.store']);
+   Route::post('notlar/destroy', ['uses' => 'Notlar\NotlarController@destroy', 'as' => 'notlar.destroy']);
   
 });
 

@@ -61,7 +61,9 @@
                             <span class="badge badge-info">{{ $role }}</span>
                             @endforeach
                         </td>
-                        <td>{{ $user->depo01->depoadi }}</td>
+                        <td>                            
+                            {{ $user->depoFirst->depoadi }}
+                        </td>
                         <td>{{ $user->created_at }}</td>
                     </tr>
                     @endforeach
