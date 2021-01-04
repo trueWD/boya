@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Urun;
+namespace App\Http\Requests\Satis;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateUrunRequest extends FormRequest
+class FiyatGuncelleRequest extends FormRequest
 {
     public function authorize()
     {
@@ -14,10 +14,9 @@ class UpdateUrunRequest extends FormRequest
     public function rules()
     {
         return [
-            'urunadi' => 'required',
             'fiyat' => 'required',
-            'fiyat_grubu' => 'required',
-            'kdv' => 'required',
+            'kdv' => 'required|numeric',
+
         ];
     }
 }

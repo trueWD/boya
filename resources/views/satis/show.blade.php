@@ -8,6 +8,8 @@
 @endsection
 @section('content')
 
+<div id="FiyatGuncelleResponse"></div>
+
 @if(auth()->user()->depo01 != $siparis01->depo01)
 
 <div class="alert alert-warning alert-styled-left alert-dismissible">
@@ -15,7 +17,13 @@
     <span class="font-weight-semibold">DİKKAT!</span><b> {{ auth()->user()->name }}</b> Siz bu Depo veya Şubede işlem yapmak için yetkili değilsiniz!..
 </div>
 @else
-
+<style>
+    .barkodalani{
+        font-size: 16px;
+        font-weight: bold;
+        color: blue;
+    }
+</style>
 
 <div class="row">
 
@@ -34,7 +42,7 @@
                     <div class="form-group row">
                         <label class="col-lg-2 col-form-label">BARKODU:</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="barkod" id="barkod" placeholder="Barkod" autocomplete="off" autofocus>
+                            <input type="text" class="form-control barkodalani" name="barkod" id="barkod" placeholder="Barkod" autocomplete="off" autofocus>
                         </div>
                         <div class="col-lg-2">
                             <input type="text" class="form-control" name="miktar" id="miktar" placeholder="Miktar" value="1" autocomplete="off">
@@ -393,8 +401,11 @@
 
                     @if($siparis01->durumu=='AKTIF')
                     <td>
-                        <button type="button" class="btn btn-success btn-sm UrunArtirButton" id="{{ $row->id }}"><i class="icon-plus2"></i></button>
-                        <button type="button" class="btn btn-warning btn-sm UrunAzaltButton" id="{{ $row->id }}"><i class="icon-minus2"></i></button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success UrunArtirButton" id="{{ $row->id }}"><i class="icon-plus2"></i></button>
+                            <button type="button" class="btn btn-warning UrunAzaltButton" id="{{ $row->id }}"><i class="icon-minus2"></i></button>
+                            <button type="button" class="btn btn-primary FiyatGuncelleButton" id="{{ $row->id }}"><i class="icon-coin-dollar"></i></button>
+                        </div>
                     </td>
                     @endif
                     
@@ -503,8 +514,45 @@
 
 
 
+<!-- 
+____________________________________________________________________________________________
+Fiyat Düzeltme
+____________________________________________________________________________________________
+-->
+<script type="text/javascript">
+    $(document).on('click', '.FiyatGuncelleButton', function (e) {
+        e.preventDefault();
+        //var id = $(this).data('id');
 
+            var id = $(this).attr("id");
 
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+                });
+
+            $.ajax({
+                    method    : "POST",
+                    url       : "{{ url('satis/UrunBilgisi') }}",
+                    data      : {"id":id},
+                    dataType  : "JSON",
+                })
+            .done(function(response) {
+                
+                $("#FiyatGuncelleResponse").html(response.UrunBilgisi);
+                $('#FiyatGuncelleModal').modal('show');
+
+                })
+            .fail(function(response) {
+
+                console.log("Hata: ", response);
+
+                });
+            //return false;
+
+    });
+</script>
 
 
 
@@ -652,6 +700,10 @@ $.ajax({
         });
 
     });
+
+
+    document.getElementById("barkod").value = "";
+    document.getElementById('barkod').focus();
 
 
 

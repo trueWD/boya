@@ -112,8 +112,12 @@ var DatatableButtonsHtml5 = function() {
         });
         // Column selectors
         $('.myDataTable1').DataTable(
+
+
             
             {
+            "lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "Hepsi"]],
+            "order": [[ 2, "asc" ]],
             buttons: {            
                 buttons: [
                     {

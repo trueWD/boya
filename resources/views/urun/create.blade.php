@@ -116,7 +116,7 @@
                           
 
             
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                           <div class="form-group">
                             <label>Fiyat Kar Gurubu:</label>
                             <select class="form-control" name="fiyat_grubu">
@@ -125,6 +125,13 @@
                                 <option value="{{ $row->id }}">{{ $row->adi }}</option>
                               @endforeach
                             </select>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label>KDV Oranı:</label>
+                            <input type="text" name="kdv" class="form-control" id="kdv"  value="18" placeholder="KDV Oranı" autocomplete="off">
                           </div>
                         </div>
 

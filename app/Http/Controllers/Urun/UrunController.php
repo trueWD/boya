@@ -82,6 +82,7 @@ class UrunController extends Controller
         $urun->birim        = $request->birim;
         $urun->marka        = $request->marka;
         $urun->grubu        = $request->grubu;
+        $urun->kdv          = $request->kdv;
         $urun->barkod       = $request->barkod;
         $urun->fiyat        = paraEn($fiyat);
         $urun->fiyat_grubu  = $request->fiyat_grubu;
@@ -193,6 +194,7 @@ class UrunController extends Controller
         $urun->birim        = $request->birim;
         $urun->marka        = $request->marka;
         $urun->grubu        = $request->grubu;
+        $urun->kdv          = $request->kdv;
         $urun->fiyat        = paraEn($fiyat);
         $urun->fiyat_grubu  = $request->fiyat_grubu;
         $urun->satis_fiyat  = $satis_fiyat;

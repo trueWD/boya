@@ -14,6 +14,7 @@ use App\Models\Banka01;
 use App\User;
 use App\Models\Params;
 use App\Http\Requests\Satis\VeresiyeKapatRequest;
+use App\Http\Requests\Satis\FiyatGuncelleRequest;
 
 class SatisController extends Controller
 {
@@ -608,6 +609,64 @@ class SatisController extends Controller
 
         return response()->json($data);
 
+    }
+
+    /*
+    _____________________________________________________________________________________________
+    Ürün Bilgisi
+    -- Sipariş içindeki ürünün fiyatını güncelleme
+    _____________________________________________________________________________________________
+    */
+    public function UrunBilgisi(Request $request)
+    {
+
+
+        
+
+        $siparis02     = Siparis02::with('urunbilgisi')->findOrFail($request->id);
+
+     
+
+        $urun  = view(
+            'satis.fiyat_edit',
+            [
+                'siparis02' => $siparis02,
+            ]
+        )->render();
+
+        $data = [
+            'UrunBilgisi'  => $urun,
+        ];
+
+        return response()->json($data);
+
+    }
+
+
+    /*
+    _____________________________________________________________________________________________
+    Sipariş içindeki ürünün fiyatını günelle
+    _____________________________________________________________________________________________
+    */
+    public function FiyatUpdate(FiyatGuncelleRequest $request)
+    {
+
+
+        $siparis02          = Siparis02::findOrFail($request->urunid);
+        $fiyat              = tutarToRaw($request->fiyat);
+
+        $siparis02->fiyat   = $fiyat;
+        $siparis02->kdv     = $request->kdv;
+        $siparis02->iskonto = $request->iskonto;
+        $siparis02->save();
+
+
+        $data = [
+            'title' => 'BAŞARILI',
+            'text' => 'Fiyat Güncellendi',
+            'type' => 'success',
+        ];
+        return response()->json($data);
     }
 
 

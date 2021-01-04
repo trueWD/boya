@@ -18,6 +18,7 @@ class StoreUrunRequest extends FormRequest
             'barkod' => 'required',
             'fiyat' => 'required',
             'fiyat_grubu' => 'required',
+            'kdv' => 'required',
         ];
     }
 }
