@@ -26,7 +26,11 @@ class SatisController extends Controller
     public function index()
     {
 
-        $siparisler     = Siparis01::with('user','cari')->whereDate('created_at', '=', date('Y-m-d'))->orWhere('durumu','=','AKTIF')->orderBy('id','DESC')->get();
+        $siparisler     = Siparis01::with('user','cari')
+                ->whereDate('created_at', '=', date('Y-m-d'))
+                ->orWhere('durumu','=','AKTIF')
+                ->orderBy('id','DESC')
+                ->get();
 
 
 
@@ -209,6 +213,7 @@ class SatisController extends Controller
 
         $siparis01      = Siparis01::with('siparis02')->findOrFail($request->id);
 
+        $cari01         = Cari01::findOrFail($request->cariid);
         //dd($urun01);
 
         if($siparis01->durumu != 'AKTIF'){
@@ -276,6 +281,7 @@ class SatisController extends Controller
         $siparis01->toplam_tutar    = $kdvDahilToplam;
         $siparis01->toplam_kdv      = $kdvMiktarToplam;
         $siparis01->toplam_iskonto  = $iskontoTutarToplam;
+        $siparis01->cari01          = $cari01->id;
         $siparis01->odemetipi       = "NAKIT";
         $siparis01->userid          = auth()->id();
         $siparis01->save();
@@ -299,6 +305,7 @@ class SatisController extends Controller
 
         $siparis01      = Siparis01::with('siparis02')->findOrFail($request->id);
         $banka01        = Banka01::findOrFail($request->banka01);
+        $cari01         = Cari01::findOrFail($request->cariid);
 
         //dd($urun01);
 
@@ -360,6 +367,7 @@ class SatisController extends Controller
         $siparis01->toplam_tutar    = $kdvDahilToplam;
         $siparis01->toplam_kdv      = $kdvMiktarToplam;
         $siparis01->toplam_iskonto  = $iskontoTutarToplam;
+        $siparis01->cari01          = $cari01->id;
         $siparis01->banka01         = $banka01->id;
         $siparis01->odemetipi       = "KART";
         $siparis01->userid          = auth()->id();
@@ -559,10 +567,24 @@ class SatisController extends Controller
     public function FisYazdir($id)
     {
 
-        $siparis01     = Siparis01::with('siparis02')->findOrFail($id);
+        $siparis01     = Siparis01::with('siparis02','cari')->findOrFail($id);
         $siparis02     = Siparis02::with('urunbilgisi')->where('siparis01', '=', $siparis01->id)->get();
 
         return view('satis.yazdir', compact('siparis01', 'siparis02'));
+
+    }
+    /*
+    _____________________________________________________________________________________________
+    Fiyatsiz Fiş Yazdır
+    _____________________________________________________________________________________________
+    */
+    public function FiyatsizFisYazdir($id)
+    {
+
+        $siparis01     = Siparis01::with('siparis02','cari')->findOrFail($id);
+        $siparis02     = Siparis02::with('urunbilgisi')->where('siparis01', '=', $siparis01->id)->get();
+
+        return view('satis.yazdir_fiyatsiz', compact('siparis01', 'siparis02'));
 
     }
 
@@ -664,6 +686,100 @@ class SatisController extends Controller
         $data = [
             'title' => 'BAŞARILI',
             'text' => 'Fiyat Güncellendi',
+            'type' => 'success',
+        ];
+        return response()->json($data);
+    }
+    /*
+    _____________________________________________________________________________________________
+    Sipariş içindeki ürünün fiyatını günelle
+    _____________________________________________________________________________________________
+    */
+    public function ProformaKapat(Request $request)
+    {
+        
+        $siparis01      = Siparis01::with('siparis02')->findOrFail($request->id);
+
+        //dd($urun01);
+
+        if ($siparis01->durumu != 'AKTIF') {
+            $data = [
+                'title' => 'HATA!',
+                'text' => 'Bu fiş kapalı!',
+                'type' => 'warning',
+            ];
+            return response()->json($data);
+        }
+
+        $kdvDahilToplam = 0;
+        $kdvMiktarToplam = 0;
+        $iskontoTutarToplam = 0;
+        foreach ($siparis01->siparis02 as $row) {
+
+            $toplam             = $row->fiyat * $row->miktar;
+            $iskontoTutar       = $toplam * ($row->iskonto / 100);
+            $iskontoluToplam    = $toplam - $iskontoTutar;
+            $kdvMiktar          = $iskontoluToplam * ($row->kdv / 100);
+            $kdvDahil           = $iskontoluToplam + $kdvMiktar;
+
+            $kdvDahilToplam     = $kdvDahilToplam + $kdvDahil;
+            $kdvMiktarToplam    = $kdvMiktarToplam + $kdvMiktar;
+            $iskontoTutarToplam = $iskontoTutarToplam + $iskontoTutar;
+
+
+        }
+
+
+        // Ürün yoksa
+
+        $siparis01->durumu          = 'TAMAM';
+        $siparis01->toplam_tutar    = $kdvDahilToplam;
+        $siparis01->toplam_kdv      = $kdvMiktarToplam;
+        $siparis01->toplam_iskonto  = $iskontoTutarToplam;
+        $siparis01->odemetipi       = "PROFORMA";
+        $siparis01->userid          = auth()->id();
+        $siparis01->save();
+
+
+        $data = [
+            'title' => 'BAŞARILI',
+            'text' => 'Proforma kapatıldı...',
+            'type' => 'success',
+        ];
+        return response()->json($data);
+    }
+    /*
+    _____________________________________________________________________________________________
+    Proforma'dan Satışa cevirme
+    _____________________________________________________________________________________________
+    */
+    public function SatisaCevir(Request $request)
+    {
+        
+        $siparis01      = Siparis01::with('siparis02')->findOrFail($request->id);
+
+        //dd($urun01);
+
+        if ($siparis01->odemetipi != 'PROFORMA') {
+            $data = [
+                'title' => 'HATA!',
+                'text' => 'Bu fiş proforma değil!!',
+                'type' => 'warning',
+            ];
+            return response()->json($data);
+        }
+
+     
+
+        $siparis01->durumu          = 'AKTIF';
+        $siparis01->odemetipi       = NULL;
+        $siparis01->userid          = auth()->id();
+        $siparis01->save();
+
+
+        $data = [
+            'title' => 'BAŞARILI',
+            'text' => 'Fiş aktif edildi!...',
             'type' => 'success',
         ];
         return response()->json($data);

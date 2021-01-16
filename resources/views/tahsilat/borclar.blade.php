@@ -1,4 +1,3 @@
-@include('tahsilat.create')
 <div class="card">
     <div class="card-header bg-transparent border-bottom pb-0 pt-sm-0 header-elements-sm-inline">
         <div class="header-elements">
@@ -51,7 +50,7 @@
 
                     
                     <td>
-                        <button class="btn btn-success btn-sm BorcKapatButton" id='{{ $row->id }}'><i class="icon-printer mr-1"></i> ÖDE</button>
+                        <button class="btn btn-success btn-sm BorcKapatButton" id='{{ $row->id }}'><i class="icon-file-check mr-1"></i> Kapat</button>
                     </td>
                     <td> 
                         <a href="{{ url('satis/'.$row->id) }}" target="_blank" class="dropdown-item">
@@ -179,7 +178,7 @@ ________________________________________________________________________________
     swalWithBootstrapButtons.fire({
       title: 'Dikkat!',
       text: "Tahsilat silinsin mi?",
-      type: 'warning',
+      icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Evet, Sil',
       cancelButtonText: 'Hayır!',
@@ -209,21 +208,18 @@ ________________________________________________________________________________
                     confirmButton: 'btn btn-success',
                     title: response.title,
                     text: response.text,
-                    type: response.type,
+                    icon: response.type,
                     confirmButtonText: 'Tamam'
                 });
-                 if(response.type == 'success'){ // if true (1)
-                     setTimeout(function(){// wait for 5 secs(2)
-                           location.reload(); // then reload the page.(3)
-                      }, 2000); 
-                   }
+                 $("#BorcListesiResponse").html(response.BorcListesi);
+
               }else{
 
                 Swal.fire({
                     confirmButton: 'btn btn-success',
                     title: response.title,
                     text: response.text,
-                    type: response.type,
+                    icon: response.type,
                     confirmButtonText: 'Tamam'
                   });
               }
@@ -233,7 +229,7 @@ ________________________________________________________________________________
                   cancelButton: 'btn btn-danger',
                   title: 'HATA!',
                   text: 'Sistemsel bir hata oluştur lütfen logları inceleyin',
-                  type: 'error',
+                  icon: 'error',
                   confirmButtonText: 'Tamam'
                 });
           });

@@ -130,6 +130,7 @@
 
                     @if($genel_toplam > 0)
                     <button type="button" class="btn btn-success NakitKapatSubmit"><i class="icon-cash3 mr-1"></i> NAKİT ÖDEME</button>
+                    <button type="button" class="btn btn-primary ProformaKapatSubmit"><i class="icon-file-check mr-1"></i> PROFORMA KAPAT</button>
                     @endif
                     <button type="button" class="btn btn-danger FisIptalButton" id="{{ $siparis01->id }}"><i class="icon-trash mr-1"></i> FİŞ İPTAL</button>
                     <input type="hidden" name="id" value="{{ $siparis01->id }}">
@@ -137,6 +138,14 @@
                     <div class="table-responsive">
                         <table class="table">
                             <tbody>
+                                <tr>
+                                    <td>
+                                        MÜŞTERİ
+                                    </td>
+                                    <td class="col-md-8">
+                                        <select class="js-example-basic-single js-states form-control select cariid text-primary" name="cariid"></select>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>
                                         <h3 class="">TOPLAM</h3>
@@ -195,6 +204,15 @@
 
                             <table class="table">
                                 <tbody>
+
+                                <tr>
+                                    <td>
+                                        MÜŞTERİ
+                                    </td>
+                                    <td class="col-md-8">
+                                        <select class="js-example-basic-single js-states form-control select cariid text-primary" name="cariid"></select>
+                                    </td>
+                                </tr>
                                     <tr>
                                         <td>
                                             BANKA
@@ -252,7 +270,7 @@
                                             MÜŞTERİ
                                         </td>
                                         <td class="col-md-8">
-                                            <select class="js-example-basic-single js-states form-control select cariid text-primary" name="cariid" id="cariid"></select>
+                                            <select class="js-example-basic-single js-states form-control select cariid text-primary" name="cariid"></select>
                                         </td>
                                     </tr>
                                     <tr>
@@ -353,7 +371,12 @@
 
         @if($siparis01->durumu=='TAMAM')
         <a href="{{ url('satis/FisYazdir/'.$siparis01->id) }}" target="_blank" class="btn bg-purple-400"><i class="icon-printer mr-1"></i> YAZDIR</a>
-        <a href="{{ url('satis/store') }}" type="button" class="btn btn-primary"><i class="icon-basket  mr-1php artisan ma"></i> Yeni Satış</a>
+        <a href="{{ url('satis/FiyatsizFisYazdir/'.$siparis01->id) }}" target="_blank" class="btn bg-warning-400"><i class="icon-printer mr-1"></i> FİYATSIZ YAZDIR</a>
+        <a href="{{ url('satis/store') }}" type="button" class="btn btn-primary"><i class="icon-basket  mr-1"></i> YENİ SATIŞ</a>
+            @if($siparis01->odemetipi =='PROFORMA')
+                <button type="button" class="btn bg-success btn-labeled btn-labeled-left SatisaCevirButton" id="{{ $siparis01->id }}"><b><i class="icon-undo"></i></b> SATIŞA ÇEVİR</button>
+                
+            @endif
         @endif
 
         <table class="table table-striped table-bordered table-hover myDataTable1">
@@ -512,7 +535,9 @@
     </div>
 </div>
 
-
+{!! JsValidator::formRequest('App\Http\Requests\Satis\VeresiyeKapatRequest', '#VeresiyeKapatForm'); !!}
+{!! JsValidator::formRequest('App\Http\Requests\Satis\VeresiyeKapatRequest', '#NakitKapatForm'); !!}
+{!! JsValidator::formRequest('App\Http\Requests\Satis\VeresiyeKapatRequest', '#KartKapatForm'); !!}
 
 <!-- 
 ____________________________________________________________________________________________
@@ -608,7 +633,7 @@ ________________________________________________________________________________
 <script>
 $.fn.modal.Constructor.prototype._enforceFocus = function() {};
 $(document).ready(function(){
-    $('#cariid').select2({
+    $('.cariid').select2({
         ajax : {
             url : "{{ url('api/musteri') }}",
             dataType : 'json',
@@ -851,6 +876,65 @@ e.preventDefault();
       }
 });
 </script>
+
+<!-- 
+____________________________________________________________________________________________
+PROFORMA KAPAT
+____________________________________________________________________________________________
+-->
+<script type="text/javascript">
+$(document).on('click', '.ProformaKapatSubmit', function(e){
+e.preventDefault();
+    if($("#NakitKapatForm").valid())
+      {
+          var data = $("#NakitKapatForm").serialize();
+
+          $.ajaxSetup({
+              headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+            });
+          $.ajax({
+                method    : "POST",
+                url       : "{{ url('satis/ProformaKapat') }}",
+                data      : data,
+                dataType  : "JSON",
+                })
+            .done(function(response) {  
+                console.log("Dönen Sonuç: ", response.responseJSON);
+                if(response.type == 'success'){
+                Swal.fire({
+                        title: response.title,
+                        text: response.text,
+                        icon: response.type,
+                        confirmButtonText: 'Tamam'
+                    });
+                    if(response.type == 'success'){ // if true (1)
+                        setTimeout(function(){// wait for 5 secs(2)
+                                location.reload(); // then reload the page.(3)
+                        }, 2000); 
+                        }
+                }else{
+
+                    Swal.fire({
+                        title: response.title,
+                        text: response.text,
+                        icon: response.type,
+                        confirmButtonText: 'Tamam'
+                    });
+
+                }
+                }).fail(function(response){
+                Swal.fire({
+                    title: 'HATA!',
+                    text: 'Logları inceleyin',
+                    icon: 'error',
+                    confirmButtonText: 'Tamam'
+                    });
+            });
+      }
+});
+</script>
 <!-- 
 ____________________________________________________________________________________________
 Kart Ödeme
@@ -915,7 +999,7 @@ ________________________________________________________________________________
 Veresiye Ödeme
 ____________________________________________________________________________________________
 -->
-{!! JsValidator::formRequest('App\Http\Requests\Satis\VeresiyeKapatRequest', '#VeresiyeKapatForm'); !!}
+
 <script type="text/javascript">
 $('#VeresiyeKapatForm .tarih_vade').pickadate();
 
@@ -1314,7 +1398,101 @@ ________________________________________________________________________________
 </script>
 
 
+@if ($siparis01->odemetipi =='PROFORMA')
+    <!-- 
+    ___________________________________________________________________________________________________
+    Ürün SİLME
+    ___________________________________________________________________________________________________
+    -->
+    <script>
+        $(document).on('click', '.SatisaCevirButton', function(){
+
+        const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false,
+        })
+
+        swalWithBootstrapButtons.fire({
+        title: 'Dikkat!',
+        text: "Proformayı fişe çevir?",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Evet, Çevir',
+        cancelButtonText: 'Hayır!',
+        reverseButtons: true
+        }).then((result) => {
+        if (result.value) {
+
+        var id = $(this).attr("id");
+
+        $.ajaxSetup({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+                method    : "POST",
+                url       : "{{ url('satis/SatisaCevir') }}",
+                data      : {"id":id},
+                dataType  : "JSON",
+                })
+            .done(function(response) {
+                console.log("Dönen Sonuç: ", response.responseJSON);
+                if(response.type == 'success'){
+
+                Swal.fire({
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger',
+                        title: response.title,
+                        text: response.text,
+                        type: response.type,
+                        confirmButtonText: 'Tamam'
+                    });
+                    if(response.type == 'success'){ // if true (1)
+                        setTimeout(function(){// wait for 5 secs(2)
+                            location.reload(); // then reload the page.(3)
+                        }, 1000); 
+                    }
+                }else{
+
+                    Swal.fire({
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger',
+                        title: response.title,
+                        text: response.text,
+                        type: response.type,
+                        confirmButtonText: 'Tamam'
+                    });
+                }
+                }).fail(function(response){
+                Swal.fire({
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger',
+                    title: 'HATA!',
+                    text: 'Sistemsel bir hata oluştur lütfen logları inceleyin',
+                    type: 'error',
+                    confirmButtonText: 'Tamam'
+                    });
+            });
+
+        }
+        });
+        return false;
+
+        });
+    </script>
 
 @endif
+
+
+
+@endif
+
+
+
 
 @endsection

@@ -6,6 +6,7 @@
     </div>
 @endsection
 @section('content')
+@include('tahsilat.create')
 
 <div class="card">
     <div class="card-header">
@@ -89,6 +90,12 @@ $(document).ready(function(){
         },
         escapeMarkup : function(markup){ return markup; }
     });
+});
+
+
+$('#cariid').on('select2:select', function (e) {
+    var data = e.params.data;
+    $(".cariid_yakala").val(data.id);
 });
 
 </script>
@@ -222,98 +229,66 @@ ________________________________________________________________________________
     });
 </script>
 
+<!-- 
+____________________________________________________________________________________________
+Tahsilat Girişi
+____________________________________________________________________________________________
+-->
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+{!! JsValidator::formRequest('App\Http\Requests\Tahsilat\YeniTahsilatRequest', '#YeniTahsilatForm'); !!}
 
 <script type="text/javascript">
-$(document).on('click', '.CariDelete', function(e){
+$(document).on('click', '.YeniTahsilatSubmit', function(e){
 e.preventDefault();
+    if($("#YeniTahsilatForm").valid())
+      {
+          var data = $("#YeniTahsilatForm").serialize();
 
-  const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-danger',
-      },
-      buttonsStyling: false,
-    })
-
-    swalWithBootstrapButtons.fire({
-      title: 'Dikkat!',
-      text: "Bu kaydı silmek istediğinizden eminmisiniz?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Evet Sil!',
-      cancelButtonText: 'Hayır!',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.value) {
-
-    var id = $(this).attr("id");
-
-    console.log(id);
-
-    $.ajaxSetup({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-      });
-
-    $.ajax({
-            method    : "POST",
-            url       : "{{ url('cari/destroy') }}",
-            data      : {"id":id},
-            dataType  : "JSON",
-            })
-        .done(function(response) {
-            console.log("Dönen Sonuç: ", response.responseJSON);
-            if(response.type == 'success'){
-
-              Swal.fire({
-                  confirmButton: 'btn btn-success',
-                    title: response.title,
-                    text: response.text,
-                    icon: response.type,
-                    confirmButtonText: 'Tamam'
-                  });
-                 if(response.type == 'success'){ // if true (1)
-                      setTimeout(function(){// wait for 5 secs(2)
-                           location.reload(); // then reload the page.(3)
-                      }, 2000);
-                   }
-              }else{
-                Swal.fire({
-                    confirmButton: 'btn btn-success',
-                    title: response.title,
-                    text: response.text,
-                    icon: response.type,
-                    confirmButtonText: 'Tamam'
-                  });
+          $.ajaxSetup({
+              headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
               }
-            }).fail(function(response){
-              Swal.fire({
-                    
-                  title: 'HATA!',
-                  text: 'Sistemsel bir hata oluştur lütfen logları inceleyin',
-                  icon: 'error',
-                  confirmButtonText: 'Tamam',
-                  confirmButton: 'btn btn-success',
-                });
-          });
+            });
+          $.ajax({
+                  method    : "POST",
+                  url       : "{{ url('tahsilat') }}",
+                  data      : data,
+                  dataType  : "JSON",
+                  })
+              .done(function(response) {  
+                  console.log("Dönen Sonuç: ", response.responseJSON);
+                  if(response.type == 'success'){
+                
+                      Swal.fire({
+                          title: response.title,
+                          text: response.text,
+                          icon: response.type,
+                          confirmButtonText: 'Tamam'
+                        });
+                       $("#BorcListesiResponse").html(response.BorcListesi);
 
+                       $('#YeniTahsilatModal').modal('hide');
+
+                    }else{
+
+                      Swal.fire({
+                          title: response.title,
+                          text: response.text,
+                          icon: response.type,
+                          confirmButtonText: 'Tamam'
+                        });
+
+                    }
+                  }).fail(function(response){
+                    Swal.fire({
+                        title: 'HATA!',
+                        text: 'Logları inceleyin',
+                        icon: 'error',
+                        confirmButtonText: 'Tamam'
+                      });
+                });
       }
-    });
 });
 </script>
 

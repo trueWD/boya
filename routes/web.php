@@ -133,9 +133,12 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('satis/KartKapat', ['uses' => 'Satis\SatisController@KartKapat', 'as' => 'satis.KartKapat']);
    Route::post('satis/VeresiyeKapat', ['uses' => 'Satis\SatisController@VeresiyeKapat', 'as' => 'satis.VeresiyeKapat']);
    Route::get('satis/FisYazdir/{id}', ['uses' => 'Satis\SatisController@FisYazdir', 'as' => 'satis.FisYazdir']);
+   Route::get('satis/FiyatsizFisYazdir/{id}', ['uses' => 'Satis\SatisController@FiyatsizFisYazdir', 'as' => 'satis.FiyatsizFisYazdir']);
    Route::post('satis/SatisRaporu', ['uses' => 'Satis\SatisController@SatisRaporu', 'as' => 'satis.SatisRaporu']);
    Route::post('satis/UrunBilgisi', ['uses' => 'Satis\SatisController@UrunBilgisi', 'as' => 'satis.UrunBilgisi']);
-   Route::post('satis/FiyatUpdate', ['uses' => 'Satis\SatisController@FiyatUpdate', 'as' => 'satis.sFiyatUpdate']);
+   Route::post('satis/FiyatUpdate', ['uses' => 'Satis\SatisController@FiyatUpdate', 'as' => 'satis.FiyatUpdate']);
+   Route::post('satis/ProformaKapat', ['uses' => 'Satis\SatisController@ProformaKapat', 'as' => 'satis.ProformaKapat']);
+   Route::post('satis/SatisaCevir', ['uses' => 'Satis\SatisController@SatisaCevir', 'as' => 'satis.SatisaCevir']);
 
    // TAHSİLAT
    Route::get('tahsilat', ['uses' => 'Tahsilat\TahsilatController@index', 'as' => 'tahsilat.index']);

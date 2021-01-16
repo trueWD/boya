@@ -47,17 +47,38 @@
                         <th>#</th>
                         <th>Fiş No</th>
                         <th>Durumu</th>
+                        <th>Ödeme Şekli</th>
                         <th>Müşteri</th>
                         <th>İskonto Tutarı</th>
                         <th>KDV Tutarı</th>
                         <th>Toplam Tutar</th>
-                        <th>Ödeme Şekli</th>
                         <th>Tarih</th>
                         <th>Satış yapan</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $toplam_nakit       = 0;
+                        $toplam_kart        = 0;
+                        $toplam_veresiye    = 0;
+                    @endphp
                     @foreach($siparisler as $row)
+
+                    @php
+                        if($row->odemetipi == 'NAKIT'){
+                            $toplam_nakit       =  $toplam_nakit + $row->toplam_tutar;  
+                        }
+                        if($row->odemetipi == 'KART'){
+                           $toplam_kart        =  $toplam_kart + $row->toplam_tutar; 
+                        }
+                       
+                        if($row->odemetipi == 'VERESIYE'){
+                           $toplam_veresiye    =  $toplam_veresiye + $row->toplam_tutar;
+                        }
+                       
+                        
+                        
+                    @endphp
                     <tr>
                         <td>
                             
@@ -93,12 +114,28 @@
                             @endif
                             </a>
                         </td>
+
+                        <td>
+                            @if ($row->odemetipi == 'PROFORMA')
+                                <span class="badge badge-flat border-primary text-primary">{{ $row->odemetipi }}</span>
+                            @endif
+                            @if ($row->odemetipi == 'NAKIT')
+                                <span class="badge badge-flat border-success text-success">{{ $row->odemetipi }}</span>
+                            @endif
+                            @if ($row->odemetipi == 'KART')
+                                <span class="badge badge-flat border-info text-info">{{ $row->odemetipi }}</span>
+                            @endif
+                            @if ($row->odemetipi == 'VERESIYE')
+                                <span class="badge badge-flat border-warning text-warning">{{ $row->odemetipi }}</span>
+                            @endif
+                            
+                            
+                        </td>
                         
                         <td> @if(isset($row->cari)) {{ $row->cari->cariadi }}  @else PERKENDE SATIŞ @endif</td>
                         <td class="text-right">{{ para($row->toplam_iskonto) }} TL</td>
                         <td class="text-right">{{ para($row->toplam_kdv) }} TL</td>
                         <td class="text-right">{{ para($row->toplam_tutar) }} TL</td>
-                        <td>{{ $row->odemetipi }}</td>
                         <td>{{ tarihSaat($row->created_at) }}</td>
                         <td>{{ $row->user->name }}</td>
                
@@ -106,6 +143,39 @@
                     @endforeach
                 </tbody>
             </table>
+
+
+<div class="row">
+<div class="col-md-6 col align-self-end">
+    <table class="table table-bordered table-hover">
+    <tbody>
+        <tr>
+            <td class="text-right">Toplam Nakit Satış</td>
+            <td class="table-success"><b>{{ para($toplam_nakit) }}</b></td>
+        </tr>
+        <tr>
+            <td class="text-right">Toplam Kart Satış</td>
+            <td class="table-info"><b>{{ para($toplam_kart) }}</b></td>
+        </tr>
+        <tr>
+            <td class="text-right">Toplam Veresiye</td>
+            <td class="table-danger"><b>{{ para($toplam_veresiye) }}</b></td>
+        </tr>
+        <tr>
+            <td class="text-right">Genel Toplam</td>
+            <td class="table-danger"><b>{{ para($toplam_nakit + $toplam_kart + $toplam_veresiye,2)  }}</b></td>
+        </tr>
+    </tbody>
+    </table>
+</div>
+</div>
+
+
+
+
+
+
+
 
 
 
@@ -148,8 +218,6 @@
                     </div>
                     
                 </div>
-
-
 
                 <div class="text-right">
                     <button type="button" class="btn btn-primary SatisRaporuSubmit">Rapor Oluştur <i class="icon-filter4 ml-2"></i></button>

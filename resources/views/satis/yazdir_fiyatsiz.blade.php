@@ -45,13 +45,12 @@ table, th, td{
 <div class="row">
     
     <div class="col-md-12 genislik">
-
-         <p><img src="{{ asset('logo.png') }}" class="img-thumbnail"></p>
+          <p><img src="{{ asset('logo.png') }}" class="img-thumbnail"></p>
          <hr>
         <table class="table table-bordered table-sm">
           <tbody>
-              <tr>
-              <th  scope="row">CARİ</th>
+            <tr>
+              <th scope="row">CARİ</th>
               <td>{{ $siparis01->cari->cariadi }}</td>
             </tr>
             <tr>
@@ -79,7 +78,6 @@ table, th, td{
                 <tr>
                     <th>ÜRÜN</th>
                     <th>ADET</th>
-                    <th>FİYAT</th>
                 </tr>
             </thead>
             <tbody>
@@ -106,24 +104,13 @@ table, th, td{
 
                     <td>{{ $row->urunbilgisi->urunadi }}</td>
                     <td class="text-right"><b>{{ para($row->miktar) }}</b></td>
-                    <td class="text-right"><b>{{ para($row->fiyat) }}</b></td>
 
                 </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <div class="row">
-          <div class="col-md-12 col align-self-end genislik">
-            <table class="table table-bordered table-sm">
-              <tbody>
-                <tr>
-                  <td class="text-right">Genel Toplam</td>
-                  <td class="table-danger text-right"><b>{{ para($kdvDahilToplam) }} TL</b></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+
 
           <div class="col-md-12">
             <p class="altmetin"><b>***BU FİŞİN MALİ DEĞERİ YOKTUR!***</b></p> 
@@ -142,4 +129,3 @@ table, th, td{
 </div>
 @endif
 @stop
-

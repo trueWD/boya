@@ -33,7 +33,7 @@
                   
                   </div>
                 <div class="modal-footer">
-                    <input type="hidden" name="cariid" value="{{ $cari01->id }}">
+                    <input type="hidden" class="cariid_yakala" id="cariid_yakala" name="id">
                     <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
                     <button type="button" class="btn bg-primary YeniTahsilatSubmit">Kaydet</button>
                 </div>
@@ -42,8 +42,6 @@
     </div>
     <!-- /basic modal -->
 </form>
-
-{!! JsValidator::formRequest('App\Http\Requests\Tahsilat\YeniTahsilatRequest', '#YeniTahsilatForm'); !!}
 <script type="text/javascript">
   new AutoNumeric('#YeniTahsilatForm #tutar', {
       decimalCharacter : ',',
@@ -51,57 +49,3 @@
       modifyValueOnWheel	: false,
   });
 </script>
-<script type="text/javascript">
-$(document).on('click', '.YeniTahsilatSubmit', function(e){
-e.preventDefault();
-    if($("#YeniTahsilatForm").valid())
-      {
-          var data = $("#YeniTahsilatForm").serialize();
-
-          $.ajaxSetup({
-              headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-              }
-            });
-          $.ajax({
-                  method    : "POST",
-                  url       : "{{ url('tahsilat') }}",
-                  data      : data,
-                  dataType  : "JSON",
-                  })
-              .done(function(response) {  
-                  console.log("Dönen Sonuç: ", response.responseJSON);
-                  if(response.type == 'success'){
-                    Swal.fire({
-                          title: response.title,
-                          text: response.text,
-                          icon: response.type,
-                          confirmButtonText: 'Tamam'
-                        });
-                       if(response.type == 'success'){ // if true (1)
-                            setTimeout(function(){// wait for 5 secs(2)
-                                 location.reload(); // then reload the page.(3)
-                            }, 2000); 
-                         }
-                    }else{
-
-                      Swal.fire({
-                          title: response.title,
-                          text: response.text,
-                          icon: response.type,
-                          confirmButtonText: 'Tamam'
-                        });
-
-                    }
-                  }).fail(function(response){
-                    Swal.fire({
-                        title: 'HATA!',
-                        text: 'Logları inceleyin',
-                        icon: 'error',
-                        confirmButtonText: 'Tamam'
-                      });
-                });
-      }
-});
-</script>
-

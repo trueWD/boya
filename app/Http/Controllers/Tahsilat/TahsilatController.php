@@ -35,8 +35,8 @@ class TahsilatController extends Controller
     public function BorcListesi(Request $request)
     {
         $cari01     = Cari01::findOrFail($request->cariid);
-        $siparis01  = Siparis01::with('user')->where('cari01','=',$request->cariid)->where('odemetipi','=','VERESIYE')->whereNull('tarih_odeme')->orderBy('id','ASC')->get();
-        $tahsilat01  = Tahsilat01::with('user','cari')->where('cari01', '=', $cari01->id)->orderBy('id', 'ASC')->get();
+        $siparis01  = Siparis01::with('user')->where('cari01','=',$request->cariid)->where('odemetipi','=','VERESIYE')->whereNull('tarih_odeme')->orderBy('id', 'DESC')->get();
+        $tahsilat01  = Tahsilat01::with('user','cari')->where('cari01', '=', $cari01->id)->orderBy('id', 'DESC')->get();
       
 
         $BorcListesi  = view(
@@ -66,26 +66,45 @@ class TahsilatController extends Controller
     public function store(YeniTahsilatRequest $request)
     {
 
-        $cari01     = Cari01::findOrFail($request->cariid);
+        $cari01     = Cari01::findOrFail($request->id);
 
         $tutar      = tutarToRaw($request->tutar);
 
        // dd($request->all());
         $data               = new Tahsilat01;
-        $data->cari01       = $request->cariid;
+        $data->cari01       = $request->id;
         $data->tutar        = paraEn($tutar);
         $data->odemetipi    = $request->odemetipi;
         $data->aciklama     = $request->aciklama;
         $data->userid       = auth()->id();
         $data->save();
 
-        $cari01->bakiye     = paraEn($request->bakiye + $tutar);
+        $cari01->bakiye     = paraEn($cari01->bakiye + $tutar);
         $cari01->save();
+
+
+
+        // Liste response Formu tekrar dold
+        $siparis01      = Siparis01::with('user')->where('cari01', '=', $cari01->id)->where('odemetipi', '=', 'VERESIYE')->whereNull('tarih_odeme')->orderBy('id', 'DESC')->get();
+        $tahsilat01     = Tahsilat01::with('user', 'cari')->where('cari01', '=', $cari01->id)->orderBy('id', 'DESC')->get();
+
+
+        $BorcListesi  = view(
+            'tahsilat.borclar',
+            [
+                'siparis01' => $siparis01,
+                'cari01' => $cari01,
+                'tahsilat01' => $tahsilat01,
+            ]
+        )->render();
+
+
 
         $data = [
             'title' => 'Başarılı!',
             'text'  => 'Ödeme kayıt edildi.',
             'type'  => 'success',
+            'BorcListesi'  => $BorcListesi,
         ];
 
         return response()->json($data);
@@ -119,8 +138,8 @@ class TahsilatController extends Controller
 
 
         $cari01     = Cari01::findOrFail($sip->cari01);
-        $siparis01  = Siparis01::with('user')->where('cari01', '=', $sip->cari01)->where('odemetipi', '=', 'VERESIYE')->whereNull('tarih_odeme')->orderBy('id', 'ASC')->get();
-        $tahsilat01  = Tahsilat01::with('user','cari')->where('cari01', '=', $cari01->id)->orderBy('id', 'ASC')->get();
+        $siparis01  = Siparis01::with('user')->where('cari01', '=', $sip->cari01)->where('odemetipi', '=', 'VERESIYE')->whereNull('tarih_odeme')->orderBy('id', 'DESC')->get();
+        $tahsilat01  = Tahsilat01::with('user','cari')->where('cari01', '=', $cari01->id)->orderBy('id', 'DESC')->get();
 
 
 
@@ -204,8 +223,8 @@ class TahsilatController extends Controller
 
         // Sipariş listesi
 
-        $siparisler  = Siparis01::with('user')->where('cari01', '=', $request->id)->where('odemetipi', '=', 'VERESIYE')->whereNull('tarih_odeme')->orderBy('id', 'ASC')->get();
-        $tahsilat01  = Tahsilat01::with('user','cari')->where('cari01', '=', $request->id)->orderBy('id', 'ASC')->get();
+        $siparisler  = Siparis01::with('user')->where('cari01', '=', $request->id)->where('odemetipi', '=', 'VERESIYE')->whereNull('tarih_odeme')->orderBy('id', 'DESC')->get();
+        $tahsilat01  = Tahsilat01::with('user','cari')->where('cari01', '=', $request->id)->orderBy('id', 'DESC')->get();
 
 
         $BorcListesi  = view(
@@ -237,17 +256,37 @@ class TahsilatController extends Controller
 
         //dd($request->id);
         $tahsilat01     = Tahsilat01::findOrFail($request->id);
+
+        
         $cari01         = Cari01::findOrFail($tahsilat01->cari01);
         $cari01->bakiye = paraEn($cari01->bakiye - $tahsilat01->tutar);
         $cari01->save();
         $tahsilat01->delete();
 
 
+        // Liste response Formu tekrar dold
+        $siparis01      = Siparis01::with('user')->where('cari01', '=', $cari01->id)->where('odemetipi', '=', 'VERESIYE')->whereNull('tarih_odeme')->orderBy('id', 'DESC')->get();
+        $tahsilat01     = Tahsilat01::with('user', 'cari')->where('cari01', '=', $cari01->id)->orderBy('id', 'DESC')->get();
+
+
+        $BorcListesi  = view(
+            'tahsilat.borclar',
+            [
+                'siparis01' => $siparis01,
+                'cari01' => $cari01,
+                'tahsilat01' => $tahsilat01,
+            ]
+        )->render();
+
+
+
         $data = [
-            'title' => 'BAŞARILI',
-            'text' => 'Tahsilat Silindi...',
-            'type' => 'success',
-        ];
+                'title' => 'Başarılı!',
+                'text'  => 'Tahsilat Silindi',
+                'type'  => 'success',
+                'BorcListesi'  => $BorcListesi,
+            ];
+
         return response()->json($data);
     }
     /*
