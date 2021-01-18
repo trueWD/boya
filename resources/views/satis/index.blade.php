@@ -61,6 +61,7 @@
                         $toplam_nakit       = 0;
                         $toplam_kart        = 0;
                         $toplam_veresiye    = 0;
+                        $toplam_iade        = 0;
                     @endphp
                     @foreach($siparisler as $row)
 
@@ -75,11 +76,14 @@
                         if($row->odemetipi == 'VERESIYE'){
                            $toplam_veresiye    =  $toplam_veresiye + $row->toplam_tutar;
                         }
+                        if($row->durumu == 'IADE'){
+                           $toplam_iade    =  $toplam_iade + $row->toplam_tutar;
+                        }
                        
                         
                         
                     @endphp
-                    <tr>
+                    <tr  @if($row->durumu=='IADE') class="table-warning" @endif>
                         <td>
                             
                             <div class="btn-group btn-group-sm">
@@ -128,6 +132,14 @@
                             @if ($row->odemetipi == 'VERESIYE')
                                 <span class="badge badge-flat border-warning text-warning">{{ $row->odemetipi }}</span>
                             @endif
+                            @if($row->durumu=='IADE')
+                                @if ($row->odemetipi == 'NAKIT')
+                                    <span class="badge badge-flat border-pri text-warning">NAKIT ÖDENDİ</span>
+                                @endif
+                                @if ($row->odemetipi == 'HESAP')
+                                    <span class="badge badge-flat border-warning text-warning">CARİ HESABA EKLENDİ</span>
+                                @endif
+                            @endif
                             
                             
                         </td>
@@ -151,20 +163,25 @@
     <tbody>
         <tr>
             <td class="text-right">Toplam Nakit Satış</td>
-            <td class="table-success"><b>{{ para($toplam_nakit) }}</b></td>
+            <td class="table-success text-right"><b>{{ para($toplam_nakit) }}</b></td>
         </tr>
         <tr>
             <td class="text-right">Toplam Kart Satış</td>
-            <td class="table-info"><b>{{ para($toplam_kart) }}</b></td>
+            <td class="table-info text-right"><b>{{ para($toplam_kart) }}</b></td>
         </tr>
         <tr>
             <td class="text-right">Toplam Veresiye</td>
-            <td class="table-danger"><b>{{ para($toplam_veresiye) }}</b></td>
+            <td class="table-danger text-right"><b>{{ para($toplam_veresiye) }}</b></td>
         </tr>
         <tr>
-            <td class="text-right">Genel Toplam</td>
-            <td class="table-danger"><b>{{ para($toplam_nakit + $toplam_kart + $toplam_veresiye,2)  }}</b></td>
+            <td class="text-right">Toplam</td>
+            <td class="table-danger text-right"><b>{{ para($toplam_nakit + $toplam_kart + $toplam_veresiye, 2)  }}</b></td>
         </tr>
+        <tr>
+            <td class="text-right">İade Toplamı</td>
+            <td class="table-warning text-right"><b>{{ para($toplam_iade ,2)  }}</b></td>
+        </tr>
+
     </tbody>
     </table>
 </div>

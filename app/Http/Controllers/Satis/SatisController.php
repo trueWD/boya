@@ -699,6 +699,7 @@ class SatisController extends Controller
     {
         
         $siparis01      = Siparis01::with('siparis02')->findOrFail($request->id);
+        $cari01         = Cari01::findOrFail($request->cariid);
 
         //dd($urun01);
 
@@ -737,6 +738,7 @@ class SatisController extends Controller
         $siparis01->toplam_kdv      = $kdvMiktarToplam;
         $siparis01->toplam_iskonto  = $iskontoTutarToplam;
         $siparis01->odemetipi       = "PROFORMA";
+        $siparis01->cari01          = $cari01->id;
         $siparis01->userid          = auth()->id();
         $siparis01->save();
 
@@ -784,10 +786,98 @@ class SatisController extends Controller
         ];
         return response()->json($data);
     }
+    /*
+    _____________________________________________________________________________________________
+    iade Kapat
+    _____________________________________________________________________________________________
+    */
+    public function IadeKapat(Request $request)
+    {
+
+
+       // dd($request->all());
+
+        $siparis01      = Siparis01::with('siparis02')->findOrFail($request->id);
+
+        $cari01         = Cari01::findOrFail($request->cariid);
+        //dd($urun01);
+
+        if ($siparis01->durumu != 'AKTIF') {
+            $data = [
+                'title' => 'HATA!',
+                'text' => 'Bu fiş kapalı!',
+                'type' => 'warning',
+            ];
+            return response()->json($data);
+        }
+
+        $kdvDahilToplam = 0;
+        $kdvMiktarToplam = 0;
+        $iskontoTutarToplam = 0;
+        foreach ($siparis01->siparis02 as $row) {
+
+            $toplam             = $row->fiyat * $row->miktar;
+            $iskontoTutar       = $toplam * ($row->iskonto / 100);
+            $iskontoluToplam    = $toplam - $iskontoTutar;
+            $kdvMiktar          = $iskontoluToplam * ($row->kdv / 100);
+            $kdvDahil           = $iskontoluToplam + $kdvMiktar;
+
+            $kdvDahilToplam     = $kdvDahilToplam + $kdvDahil;
+            $kdvMiktarToplam    = $kdvMiktarToplam + $kdvMiktar;
+            $iskontoTutarToplam = $iskontoTutarToplam + $iskontoTutar;
+
+            // Stok kartını güncelle
+            $urun01             = Urun01::findOrFail($row->urun01);
+            $urun01->satilan    = $urun01->satilan - $row->miktar;
+            $urun01->save();
 
 
 
+            $urun02     = Urun02::where('urun01', '=', $urun01->id)->where('depo01', '=', auth()->user()->depo01)->first();
+            if ($urun02 == NULL) {
 
+                // Ürün yoksa
+                $ekle                   = new Urun02;
+                $ekle->depo01           = auth()->user()->depo01;
+                $ekle->urun01           = $urun01->id;
+                $ekle->miktar           = 0 - $row->miktar;
+                $ekle->save();
+            } else {
+
+                // Bu siparişte zaten bu ürün varise
+                $urun02->miktar = $urun02->miktar - $row->miktar;
+                $urun02->save();
+            }
+        }
+
+
+        // Ürün yoksa
+
+        $siparis01->durumu          = 'IADE';
+        $siparis01->toplam_tutar    = $kdvDahilToplam;
+        $siparis01->toplam_kdv      = $kdvMiktarToplam;
+        $siparis01->toplam_iskonto  = $iskontoTutarToplam;
+        $siparis01->cari01          = $cari01->id;
+        $siparis01->odemetipi       = $request->iade_tipi;
+        $siparis01->userid          = auth()->id();
+        $siparis01->aciklama        = $request->aciklama;
+        $siparis01->save();
+
+        if($request->iade_tipi == 'HESAP'){
+
+            $cari01->bakiye     = $cari01->bakiye + $kdvDahilToplam;
+            $cari01->save();
+
+        } 
+
+
+        $data = [
+            'title' => 'BAŞARILI',
+            'text' => 'İade yapıldı...',
+            'type' => 'success',
+        ];
+        return response()->json($data);
+    }
 
 
 

@@ -91,7 +91,7 @@
                                 NAKİT
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item ">
                             <a href="#card-tab2" class="nav-link" data-toggle="tab">
                                 <i class="icon-credit-card mr-2"></i>
                                 KART
@@ -101,6 +101,12 @@
                             <a href="#card-tab3" class="nav-link" data-toggle="tab">
                                 <i class="icon-notebook mr-2"></i>
                                 VERESİYE
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#card-tab4" class="nav-link text-danger" data-toggle="tab">
+                                <i class="icon-subtract mr-2"></i>
+                                İADE
                             </a>
                         </li>
                     </ul>
@@ -298,6 +304,67 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>
+                                            <h3 class="">TOPLAM</h3>
+                                        </td>
+
+                                        <td>
+                                            <h3 class="text-right text-primary"><b>{{ para($genel_toplam) }} TL</b></h3>
+                                        </td>
+                                    </tr>
+    
+                                </tbody>
+                            </table>
+
+                            
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="tab-pane fade" id="card-tab4">
+
+                    <form id="IadeKapatForm">
+
+                        @if($genel_toplam > 0)
+                        <button type="button" class="btn btn-warning IadeKapatSubmit"><i class="icon-subtract mr-1"></i> İADE OLARAK KAPAT</button>
+                        @endif
+                       
+                        <input type="hidden" name="id" value="{{ $siparis01->id }}">
+                        <hr>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            MÜŞTERİ
+                                        </td>
+                                        <td class="col-md-8">
+                                            <select class="js-example-basic-single js-states form-control select cariid text-primary" name="cariid"></select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            ÖDEME
+                                        </td>
+                                        <td class="col-md-8">
+                                            <select name="iade_tipi" class="form-control">
+                                                <option value="NAKIT">NAKT GERİ ÖDEME</option>
+                                                <option value="HESAP">CARİ HESABA ÖDEME</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            AÇIKLAMA
+                                        </td>
+                                        <td class="col-md-8">
+                                            <textarea class="form-control" name="aciklama" placeholder="Açıklama Yazınız!"></textarea>
+                                        </td>
+                                    </tr>
+                    
                                     <tr>
                                         <td>
                                             <h3 class="">TOPLAM</h3>
@@ -538,6 +605,7 @@
 {!! JsValidator::formRequest('App\Http\Requests\Satis\VeresiyeKapatRequest', '#VeresiyeKapatForm'); !!}
 {!! JsValidator::formRequest('App\Http\Requests\Satis\VeresiyeKapatRequest', '#NakitKapatForm'); !!}
 {!! JsValidator::formRequest('App\Http\Requests\Satis\VeresiyeKapatRequest', '#KartKapatForm'); !!}
+{!! JsValidator::formRequest('App\Http\Requests\Satis\VeresiyeKapatRequest', '#IadeKapatForm'); !!}
 
 <!-- 
 ____________________________________________________________________________________________
@@ -956,6 +1024,65 @@ e.preventDefault();
           $.ajax({
                 method    : "POST",
                 url       : "{{ url('satis/KartKapat') }}",
+                data      : data,
+                dataType  : "JSON",
+                })
+            .done(function(response) {  
+                console.log("Dönen Sonuç: ", response.responseJSON);
+                if(response.type == 'success'){
+                Swal.fire({
+                        title: response.title,
+                        text: response.text,
+                        icon: response.type,
+                        confirmButtonText: 'Tamam'
+                    });
+                    if(response.type == 'success'){ // if true (1)
+                        setTimeout(function(){// wait for 5 secs(2)
+                                location.reload(); // then reload the page.(3)
+                        }, 2000); 
+                        }
+                }else{
+
+                    Swal.fire({
+                        title: response.title,
+                        text: response.text,
+                        icon: response.type,
+                        confirmButtonText: 'Tamam'
+                    });
+
+                }
+                }).fail(function(response){
+                Swal.fire({
+                    title: 'HATA!',
+                    text: 'Logları inceleyin',
+                    icon: 'error',
+                    confirmButtonText: 'Tamam'
+                    });
+            });
+      }
+});
+</script>
+<!-- 
+____________________________________________________________________________________________
+İade Kapatma
+____________________________________________________________________________________________
+-->
+
+<script type="text/javascript">
+$(document).on('click', '.IadeKapatSubmit', function(e){
+e.preventDefault();
+    if($("#IadeKapatForm").valid())
+      {
+          var data = $("#IadeKapatForm").serialize();
+
+          $.ajaxSetup({
+              headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+            });
+          $.ajax({
+                method    : "POST",
+                url       : "{{ url('satis/IadeKapat') }}",
                 data      : data,
                 dataType  : "JSON",
                 })

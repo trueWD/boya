@@ -23,6 +23,7 @@ class Siparis01 extends Migration
             $table->string('tarih_odeme')->nullable();
             $table->string('anlasma')->nullable();
             $table->string('userid')->nullable();
+            $table->string('aciklama')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

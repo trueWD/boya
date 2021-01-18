@@ -139,7 +139,8 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('satis/FiyatUpdate', ['uses' => 'Satis\SatisController@FiyatUpdate', 'as' => 'satis.FiyatUpdate']);
    Route::post('satis/ProformaKapat', ['uses' => 'Satis\SatisController@ProformaKapat', 'as' => 'satis.ProformaKapat']);
    Route::post('satis/SatisaCevir', ['uses' => 'Satis\SatisController@SatisaCevir', 'as' => 'satis.SatisaCevir']);
-
+   Route::post('satis/IadeKapat', ['uses' => 'Satis\SatisController@IadeKapat', 'as' => 'satis.IadeKapat']);
+   
    // TAHSİLAT
    Route::get('tahsilat', ['uses' => 'Tahsilat\TahsilatController@index', 'as' => 'tahsilat.index']);
    Route::post('tahsilat', ['uses' => 'Tahsilat\TahsilatController@store', 'as' => 'tahsilat.store']);
