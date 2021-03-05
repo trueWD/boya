@@ -115,6 +115,13 @@ table, th, td{
           <div class="col-md-12">
             <p class="altmetin"><b>***BU FİŞİN MALİ DEĞERİ YOKTUR!***</b></p> 
           </div>
+          <hr>
+          <div class="col-md-12">
+            @foreach ($siparis01->notlar as $item)
+              <span><b>NOT:</b> {{ $item->not }} </span>  
+              <hr>
+            @endforeach
+          </div>
 
          
      

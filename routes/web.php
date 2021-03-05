@@ -150,7 +150,8 @@ Route::group(['middleware' => ['auth']], function () {
    Route::post('tahsilat/TahsilatSil', ['uses' => 'Tahsilat\TahsilatController@TahsilatSil', 'as' => 'tahsilat.TahsilatSil']);
    Route::get('tahsilat/TahsilatRaporu', ['uses' => 'Tahsilat\TahsilatController@TahsilatRaporu', 'as' => 'tahsilat.TahsilatRaporu']);
    Route::post('tahsilat/RaporSorgu', ['uses' => 'Tahsilat\TahsilatController@RaporSorgu', 'as' => 'tahsilat.RaporSorgu']);
-
+   Route::get('tahsilat/TahsilatYazdir/{id}', ['uses' => 'Tahsilat\TahsilatController@TahsilatYazdir', 'as' => 'tahsilat.TahsilatYazdir']);
+   
    // ODEMELER
    Route::get('odeme', ['uses' => 'Odeme\OdemeController@index', 'as' => 'odeme.index']);
    Route::post('odeme', ['uses' => 'Odeme\OdemeController@store', 'as' => 'odeme.store']);

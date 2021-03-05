@@ -20,7 +20,7 @@ class CariController extends Controller
     public function index()
     {
   
-        $cariler    = Cari01::all();
+        $cariler    = Cari01::where('depo01', auth()->user()->depo01)->get();
         $users      = User::all();
         $params     = Params::where('database','=','cari01')->get();
 
@@ -38,11 +38,32 @@ class CariController extends Controller
     */
     public function store(StoreCariRequest $request)
     {
-        if (! Gate::allows('users_manage')) {
-            return abort(401);
-        }
-
-        $cari       = Cari01::create($request->all());
+        $cari                   = new Cari01;
+        $cari->durumu           = $request->durumu;
+        $cari->grubu            = $request->grubu;
+        $cari->cariadi          = $request->cariadi;
+        $cari->vergino          = $request->vergino;
+        $cari->vergidairesi     = $request->vergidairesi;
+        $cari->muhasebeapi      = $request->muhasebeapi;
+        $cari->ulke             = $request->ulke;
+        $cari->sehir            = $request->sehir;
+        $cari->ilce             = $request->ilce;
+        $cari->adres            = $request->adres;
+        $cari->telefon          = $request->telefon;
+        $cari->telefon2         = $request->telefon2;
+        $cari->faks             = $request->faks;
+        $cari->website          = $request->website;
+        $cari->email            = $request->email;
+        $cari->yetkili          = $request->yetkili;
+        $cari->yetkili_gsm      = $request->yetkili_gsm;
+        $cari->temsilci         = $request->temsilci;
+        $cari->bakiye           = $request->bakiye;
+        $cari->parabirimi       = $request->parabirimi;
+        $cari->vadegun          = $request->vadegun;
+        $cari->riskgrubu        = $request->riskgrubu;
+        $cari->aciklama         = $request->aciklama;
+        $cari->depo01           = auth()->user()->depo01;
+        $cari->save();
 
         $data =[
             'title' => 'Başarılı',

@@ -51,15 +51,15 @@ table, th, td{
         <table class="table table-bordered table-sm">
           <tbody>
               <tr>
-              <th  scope="row">CARİ</th>
+              <th>CARİ</th>
               <td>{{ $siparis01->cari->cariadi }}</td>
             </tr>
             <tr>
-              <th scope="row">TARİH</th>
+              <th>TARİH</th>
               <td>{{ tarihSaat($siparis01->created_at) }}</td>
             </tr>
             <tr>
-              <th scope="row">FİŞ NO</th>
+              <th>FİŞ NO</th>
               <td>{{ $siparis01->id }}</td>
             </tr>
           </tbody>
@@ -127,6 +127,13 @@ table, th, td{
 
           <div class="col-md-12">
             <p class="altmetin"><b>***BU FİŞİN MALİ DEĞERİ YOKTUR!***</b></p> 
+          </div>
+          <hr>
+          <div class="col-md-12">
+            @foreach ($siparis01->notlar as $item)
+              <span><b>NOT:</b> {{ $item->not }} </span>  
+              <hr>
+            @endforeach
           </div>
 
          

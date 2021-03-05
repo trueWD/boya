@@ -27,8 +27,11 @@ class SatisController extends Controller
     {
 
         $siparisler     = Siparis01::with('user','cari')
-                ->whereDate('created_at', '=', date('Y-m-d'))
-                ->orWhere('durumu','=','AKTIF')
+                ->where('depo01', auth()->user()->depo01)
+                ->where(function ($query) {
+                    $query->whereDate('created_at', '=', date('Y-m-d'))
+                        ->orWhere('durumu', '=', 'AKTIF');
+                })
                 ->orderBy('id','DESC')
                 ->get();
 
@@ -567,7 +570,7 @@ class SatisController extends Controller
     public function FisYazdir($id)
     {
 
-        $siparis01     = Siparis01::with('siparis02','cari')->findOrFail($id);
+        $siparis01     = Siparis01::with('siparis02','cari', 'notlar')->findOrFail($id);
         $siparis02     = Siparis02::with('urunbilgisi')->where('siparis01', '=', $siparis01->id)->get();
 
         return view('satis.yazdir', compact('siparis01', 'siparis02'));
@@ -581,7 +584,7 @@ class SatisController extends Controller
     public function FiyatsizFisYazdir($id)
     {
 
-        $siparis01     = Siparis01::with('siparis02','cari')->findOrFail($id);
+        $siparis01     = Siparis01::with('siparis02','cari', 'notlar')->findOrFail($id);
         $siparis02     = Siparis02::with('urunbilgisi')->where('siparis01', '=', $siparis01->id)->get();
 
         return view('satis.yazdir_fiyatsiz', compact('siparis01', 'siparis02'));

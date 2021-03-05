@@ -297,7 +297,7 @@ class TahsilatController extends Controller
     public function TahsilatRaporu()
     {
 
-        $tahsilat01  = Tahsilat01::with('user', 'cari')->orderBy('id', 'ASC')->get();
+        $tahsilat01  = Tahsilat01::with('user', 'cari')->whereDay('created_at', now())->orderBy('id', 'DESC')->get();
         return view('tahsilat.rapor_index',compact('tahsilat01'));
     }
     /*
@@ -333,6 +333,20 @@ class TahsilatController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    /*
+    _____________________________________________________________________________________________
+    Fiş Yazdır
+    _____________________________________________________________________________________________
+    */
+    public function TahsilatYazdir($id)
+    {
+
+        $tahsilat     = Tahsilat01::with('cari')->findOrFail($id);
+
+        return view('tahsilat.tahsilat_yazdir', compact('tahsilat'));
+
     }
 
     

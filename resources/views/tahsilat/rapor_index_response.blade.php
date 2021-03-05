@@ -26,7 +26,16 @@
 
             
             <td>
-                <button class="btn btn-danger btn-sm TahsilatSilButton" id='{{ $row->id }}'><i class="icon-trash mr-1"></i> Sil</button>
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon-menu7"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="{{ url('tahsilat/TahsilatYazdir/'.$row->id) }}" target="_blank" class="dropdown-item"><i class="icon-printer"></i> Yazdır</a>
+                        <div class="dropdown-divider"></div>
+                        <button type="button" class="dropdown-item text-danger TahsilatSilButton" id="{{ $row->id }}"><i class="icon-bin"></i> Sil</button>
+                    </div>
+                </div>
             </td>
             <td> 
                 {{ $row->cari->cariadi }}
@@ -49,11 +58,11 @@
     </tbody>
 </table>
 
-        @else
-        
-            <div class="alert alert-warning alert-styled-left alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-                <span class="font-weight-semibold">BİLGİ!</span> Bu tarite hiç ödeme yok!..
-            </div>
+@else
 
-        @endif
+    <div class="alert alert-warning alert-styled-left alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+        <span class="font-weight-semibold">BİLGİ!</span> Bu tarite hiç ödeme yok!..
+    </div>
+
+@endif
